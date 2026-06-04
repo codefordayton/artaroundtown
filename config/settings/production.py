@@ -23,7 +23,10 @@ else:
     MEDIA_ROOT = BASE_DIR / 'media'
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
+# Railway terminates TLS at the edge; the app only ever sees HTTP internally.
+# Enabling SSL redirect would cause Railway's health checker (plain HTTP) to
+# get a 301 and never see a 200.
+SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
