@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Artists — Art Around Town Dayton{% endblock %}
+
+{% block content %}
+<h1>Artists</h1>
+
+<div class="medium-filter mb-4 mt-2 d-flex flex-wrap gap-2 align-items-center">
+    <span class="fw-semibold text-muted small">Filter by medium:</span>
+    <a href="{% url 'artist-list' %}"
+       class="btn btn-sm {% if not selected_medium %}btn-dark{% else %}btn-outline-dark{% endif %}">
+        All
+    </a>
+    {% for medium in mediums %}
+        <a href="?medium={{ medium.slug }}"
+           class="btn btn-sm {% if selected_medium == medium.slug %}btn-dark{% else %}btn-outline-dark{% endif %}">
+            {{ medium.name }}
+        </a>
+    {% endfor %}
+</div>
+
+<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+{% for artist in artists %}
+    <div class="col">
+        <a href="{% url 'artist-detail' artist.slug %}" class="text-decoration-none text-dark">
+            <div class="card h-100 artist-card">
+                {% if artist.profile_image %}
+                    <img src="{{ artist.profile_image.url }}" class="card-img-top" alt="{{ artist.name }}" style="height:200px;object-fit:cover">
+                {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height:200px">
+                        <span class="text-muted" style="font-size:3rem">&#127912;</span>
+                    </div>
+                {% endif %}
+                <div class="card-body text-center">
+                    <h6 class="card-title mb-1">{{ artist.name }}</h6>
+                    {% with media=artist.mediums.all %}
+                    {% if media %}
+                        <p class="card-text small text-muted">{{ media|join:", " }}</p>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </a>
+    </div>
+{% empty %}
+    <p class="text-muted col-12">No artists found{% if selected_medium %} for that medium{% endif %}.</p>
+{% endfor %}
+</div>
+{% endblock %}

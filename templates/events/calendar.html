@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Calendar — Art Around Town Dayton{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h1 class="mb-0">Art Around Town Calendar</h1>
+    <div class="d-flex gap-2">
+        <a href="{% url 'calendar-embed' %}" class="btn btn-outline-secondary btn-sm" target="_blank">
+            Embed this calendar
+        </a>
+    </div>
+</div>
+<div id="calendar"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,listMonth'
+        },
+        eventColor: '#E8523A',
+        events: {
+            url: '/api/events/calendar/',
+            failure: function () {
+                alert('Could not load events. Please try refreshing the page.');
+            }
+        },
+        eventClick: function (info) {
+            info.jsEvent.preventDefault();
+            var slug = info.event.extendedProps.slug;
+            if (slug) {
+                window.location.href = '/events/' + slug + '/';
+            }
+        },
+        eventDidMount: function (info) {
+            var loc = info.event.extendedProps.location;
+            if (loc) {
+                info.el.title = loc;
+            }
+        }
+    });
+    calendar.render();
+});
+</script>
+{% endblock %}

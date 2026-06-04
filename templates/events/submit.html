@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit an Event — Art Around Town Dayton{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-8">
+    <h1 class="mb-1">Submit an Event</h1>
+
+      <p class="text-muted mb-4">
+        Events are reviewed before appearing on the calendar — usually within a day or two.
+        Fields marked <span class="text-danger">*</span> are required.
+      </p>
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {# ── Contact info (anonymous only) ──────────────────────── #}
+        {% if anonymous %}
+        <h5 class="form-section-heading">Your Contact Info</h5>
+        <div class="row g-3 mb-3">
+          <div class="col-sm-6">
+            <label class="form-label fw-bold">Your name <span class="text-danger">*</span></label>
+            <input type="text" name="submitter_name"
+                   class="form-control {% if form.submitter_name.errors %}is-invalid{% endif %}"
+                   value="{{ form.submitter_name.value|default:'' }}" required>
+            {% for e in form.submitter_name.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="col-sm-6">
+            <label class="form-label fw-bold">Your email <span class="text-danger">*</span></label>
+            <input type="email" name="submitter_email"
+                   class="form-control {% if form.submitter_email.errors %}is-invalid{% endif %}"
+                   value="{{ form.submitter_email.value|default:'' }}" required>
+            <div class="form-text">{{ form.submitter_email.help_text }}</div>
+            {% for e in form.submitter_email.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for e in form.non_field_errors %}{{ e }}<br>{% endfor %}
+          </div>
+        {% endif %}
+
+        {# ── Basic info ──────────────────────────────────────────── #}
+        <h5 class="form-section-heading">Event Details</h5>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">Event title <span class="text-danger">*</span></label>
+          <input type="text" name="title" class="form-control form-control-lg {% if form.title.errors %}is-invalid{% endif %}"
+                 value="{{ form.title.value|default:'' }}" required>
+          {% for e in form.title.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-sm-6">
+            <label class="form-label fw-bold">Opening / start date <span class="text-danger">*</span></label>
+            <input type="date" name="start_date" class="form-control {% if form.start_date.errors %}is-invalid{% endif %}"
+                   value="{{ form.start_date.value|default:'' }}" required>
+            {% for e in form.start_date.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="col-sm-6">
+            <label class="form-label fw-bold">Closing / end date</label>
+            <input type="date" name="end_date" class="form-control {% if form.end_date.errors %}is-invalid{% endif %}"
+                   value="{{ form.end_date.value|default:'' }}">
+            <div class="form-text">For multi-day exhibitions. Leave blank for single-day events.</div>
+            {% for e in form.end_date.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          </div>
+        </div>
+
+        {# ── Optional dates ──────────────────────────────────────── #}
+        <div class="card bg-light border-0 p-3 mb-3">
+          <p class="fw-bold mb-3 small text-uppercase text-muted" style="letter-spacing:.05em">
+            Additional dates <span class="fw-normal">(optional)</span>
+          </p>
+
+          <div class="row g-3 mb-3">
+            <div class="col-sm-6">
+              <label class="form-label fw-bold small">Opening reception date</label>
+              <input type="date" name="opening_reception_date" class="form-control form-control-sm"
+                     value="{{ form.opening_reception_date.value|default:'' }}">
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label fw-bold small">Opening reception time</label>
+              <input type="time" name="opening_reception_time" class="form-control form-control-sm"
+                     value="{{ form.opening_reception_time.value|default:'' }}">
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-sm-6">
+              <label class="form-label fw-bold small">Artist talk date</label>
+              <input type="date" name="artist_talk_date" class="form-control form-control-sm"
+                     value="{{ form.artist_talk_date.value|default:'' }}">
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label fw-bold small">Artist talk time</label>
+              <input type="time" name="artist_talk_time" class="form-control form-control-sm"
+                     value="{{ form.artist_talk_time.value|default:'' }}">
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label class="form-label fw-bold small">Closing reception date</label>
+              <input type="date" name="closing_reception_date" class="form-control form-control-sm"
+                     value="{{ form.closing_reception_date.value|default:'' }}">
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label fw-bold small">Closing reception time</label>
+              <input type="time" name="closing_reception_time" class="form-control form-control-sm"
+                     value="{{ form.closing_reception_time.value|default:'' }}">
+            </div>
+          </div>
+        </div>
+
+        {# ── Location ────────────────────────────────────────────── #}
+        <h5 class="form-section-heading">Location</h5>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">Gallery / venue</label>
+          <select name="venue" class="form-select {% if form.venue.errors %}is-invalid{% endif %}">
+            <option value="">— Select a gallery / venue —</option>
+            {% for venue in form.venue.field.queryset %}
+              <option value="{{ venue.pk }}" {% if form.venue.value|stringformat:"s" == venue.pk|stringformat:"s" %}selected{% endif %}>
+                {{ venue.name }} — {{ venue.city }}
+              </option>
+            {% endfor %}
+          </select>
+          <div class="form-text">{{ form.venue.help_text }}</div>
+          {% for e in form.venue.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">Custom location</label>
+          <input type="text" name="location_name" class="form-control {% if form.location_name.errors %}is-invalid{% endif %}"
+                 value="{{ form.location_name.value|default:'' }}"
+                 placeholder="e.g. Oregon District, Dayton OH">
+          <div class="form-text">{{ form.location_name.help_text }}</div>
+          {% for e in form.location_name.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+
+        {# ── Content ─────────────────────────────────────────────── #}
+        <h5 class="form-section-heading">About the Event</h5>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">Description <span class="text-danger">*</span></label>
+          <textarea name="description" rows="5"
+                    class="form-control {% if form.description.errors %}is-invalid{% endif %}"
+                    required>{{ form.description.value|default:'' }}</textarea>
+          {% for e in form.description.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">Event URL</label>
+          <input type="url" name="url" class="form-control {% if form.url.errors %}is-invalid{% endif %}"
+                 value="{{ form.url.value|default:'' }}" placeholder="https://...">
+          {% for e in form.url.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-bold">Event image</label>
+          <input type="file" name="image" class="form-control" accept="image/*">
+          <div class="form-text">Recommended: at least 800px wide, JPG or PNG.</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg px-5">Submit Event</button>
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg ms-2">Cancel</a>
+      </form>
+  </div>
+</div>
+{% endblock %}

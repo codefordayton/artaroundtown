@@ -1,0 +1,324 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+/* ── Design tokens ─────────────────────────────────────────── */
+:root {
+  --color-primary:   #E8523A;   /* coral-orange */
+  --color-secondary: #2A9D8F;   /* teal */
+  --color-accent:    #F4A261;   /* amber */
+  --color-purple:    #7B5EA7;   /* purple */
+  --color-dark:      #1E1B2E;   /* deep navy */
+  --color-text:      #2D3436;
+  --color-muted:     #636e72;
+  --color-light:     #F8F6F3;
+  --radius-pill:     2rem;
+  --radius-card:     14px;
+  --transition:      0.18s ease;
+}
+
+/* ── Base ──────────────────────────────────────────────────── */
+body {
+  font-family: 'Nunito', sans-serif;
+  color: var(--color-text);
+  background-color: #fff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 800;
+  color: var(--color-dark);
+}
+
+a { color: var(--color-primary); }
+a:hover { color: #c94428; }
+
+/* ── Navbar ────────────────────────────────────────────────── */
+.navbar {
+  background-color: var(--color-dark) !important;
+  padding: 0.75rem 0;
+  position: relative;
+}
+
+/* Colorful gradient stripe along the bottom of the nav */
+.navbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-secondary), var(--color-purple));
+}
+
+.navbar-brand {
+  font-weight: 900;
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+  color: #fff !important;
+}
+
+.nav-link {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.8) !important;
+  transition: color var(--transition);
+  padding: 0.5rem 0.9rem !important;
+}
+
+.nav-link:hover {
+  color: var(--color-accent) !important;
+}
+
+/* ── Buttons ───────────────────────────────────────────────── */
+.btn {
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  transition: all var(--transition);
+}
+
+.btn-primary,
+.btn-outline-primary:hover {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: #c94428;
+  border-color: #c94428;
+}
+
+.btn-outline-primary {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.btn-outline-secondary {
+  color: var(--color-muted);
+  border-color: #ccc;
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--color-light);
+  color: var(--color-dark);
+  border-color: #aaa;
+}
+
+.btn-dark {
+  background-color: var(--color-dark);
+  border-color: var(--color-dark);
+}
+
+.btn-outline-dark {
+  color: var(--color-dark);
+  border-color: var(--color-dark);
+}
+
+.btn-outline-dark:hover {
+  background-color: var(--color-dark);
+  color: #fff;
+}
+
+/* ── Cards ─────────────────────────────────────────────────── */
+.card {
+  border: none;
+  border-radius: var(--radius-card);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  transition: transform var(--transition), box-shadow var(--transition);
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.13);
+}
+
+.card-title a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.card-title a:hover {
+  color: var(--color-dark);
+}
+
+.card-footer {
+  background: transparent;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+/* ── Artist cards ──────────────────────────────────────────── */
+.artist-card {
+  border-top: 4px solid var(--color-primary);
+}
+
+.artist-card:hover {
+  border-top-color: var(--color-secondary);
+}
+
+/* ── Venue cards — rotating accent tops ────────────────────── */
+.venue-card:nth-child(3n+1) { border-top: 4px solid var(--color-primary); }
+.venue-card:nth-child(3n+2) { border-top: 4px solid var(--color-secondary); }
+.venue-card:nth-child(3n+3) { border-top: 4px solid var(--color-accent); }
+
+/* ── Calendar page ─────────────────────────────────────────── */
+#calendar {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* FullCalendar skin */
+.fc-button-primary {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  font-family: 'Nunito', sans-serif !important;
+  font-weight: 700 !important;
+  border-radius: var(--radius-pill) !important;
+  font-size: 0.85rem !important;
+}
+
+.fc-button-primary:not(:disabled):hover {
+  background-color: #c94428 !important;
+  border-color: #c94428 !important;
+}
+
+.fc-button-primary:not(:disabled).fc-button-active {
+  background-color: var(--color-dark) !important;
+  border-color: var(--color-dark) !important;
+}
+
+.fc-toolbar-title {
+  font-family: 'Nunito', sans-serif !important;
+  font-weight: 900 !important;
+  color: var(--color-dark) !important;
+  font-size: 1.4rem !important;
+}
+
+.fc-day-today {
+  background-color: rgba(244, 162, 97, 0.12) !important;
+}
+
+.fc-col-header-cell-cushion,
+.fc-daygrid-day-number,
+.fc-list-day-text,
+.fc-list-day-side-text {
+  font-family: 'Nunito', sans-serif !important;
+  font-weight: 700 !important;
+  color: var(--color-dark) !important;
+  text-decoration: none !important;
+}
+
+.fc-event {
+  border-radius: 5px !important;
+  border: none !important;
+  font-family: 'Nunito', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  cursor: pointer;
+}
+
+/* ── Medium filter pills ───────────────────────────────────── */
+.medium-filter .btn {
+  font-size: 0.82rem;
+  padding: 0.3rem 0.85rem;
+}
+
+/* ── List group (event lists on venue detail) ──────────────── */
+.list-group-item {
+  border-color: rgba(0,0,0,0.07) !important;
+  border-radius: 8px !important;
+  margin-bottom: 4px;
+}
+
+.list-group-item a {
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.list-group-item a:hover {
+  color: var(--color-dark);
+}
+
+/* ── Badges ────────────────────────────────────────────────── */
+.badge.bg-secondary {
+  background-color: var(--color-secondary) !important;
+  font-weight: 700;
+}
+
+/* ── Event detail ──────────────────────────────────────────── */
+.event-meta dt {
+  color: var(--color-muted);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.event-meta dd {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+/* ── Footer ────────────────────────────────────────────────── */
+footer {
+  background-color: var(--color-dark) !important;
+  border-top: 4px solid;
+  border-image: linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-secondary), var(--color-purple)) 1;
+}
+
+/* ── Nav auth buttons ──────────────────────────────────────── */
+.nav-submit-btn {
+  background-color: var(--color-primary) !important;
+  color: #fff !important;
+  border-radius: var(--radius-pill) !important;
+  padding: 0.35rem 1rem !important;
+  font-weight: 700 !important;
+  transition: background-color var(--transition) !important;
+}
+
+.nav-submit-btn:hover {
+  background-color: #c94428 !important;
+}
+
+.nav-login-btn {
+  border: 2px solid rgba(255,255,255,0.4) !important;
+  border-radius: var(--radius-pill) !important;
+  padding: 0.3rem 1rem !important;
+  font-weight: 700 !important;
+}
+
+.nav-login-btn:hover {
+  border-color: #fff !important;
+  color: #fff !important;
+}
+
+/* ── Submission form ───────────────────────────────────────── */
+.form-section-heading {
+  color: var(--color-primary);
+  font-weight: 800;
+  border-bottom: 2px solid rgba(232, 82, 58, 0.15);
+  padding-bottom: 0.4rem;
+  margin-top: 2rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  margin-bottom: 0.3rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.2rem rgba(232, 82, 58, 0.2);
+}
+
+/* ── Status badges ─────────────────────────────────────────── */
+.badge {
+  font-weight: 700;
+  font-size: 0.78rem;
+}
+
+/* ── Misc ──────────────────────────────────────────────────── */
+main.container {
+  padding-top: 2rem;
+}

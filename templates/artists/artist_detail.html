@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ artist.name }} — Art Around Town Dayton{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    {% if artist.profile_image %}
+    <div class="col-md-4">
+        <img src="{{ artist.profile_image.url }}" class="img-fluid rounded shadow-sm" alt="{{ artist.name }}">
+    </div>
+    {% endif %}
+    <div class="col-md-{% if artist.profile_image %}8{% else %}12{% endif %}">
+        <h1>{{ artist.name }}</h1>
+
+        {% with media=artist.mediums.all %}
+        {% if media %}
+            <p class="text-muted">{{ media|join:" &middot; " }}</p>
+        {% endif %}
+        {% endwith %}
+
+        {% if artist.primary_venue %}
+            <p><strong>Gallery:</strong>
+                <a href="{% url 'venue-detail' artist.primary_venue.slug %}">{{ artist.primary_venue.name }}</a>
+            </p>
+        {% endif %}
+
+        {% if artist.website %}
+            <a href="{{ artist.website }}" class="btn btn-primary mb-3" target="_blank" rel="noopener">Visit Website</a>
+        {% endif %}
+
+        {% if artist.bio %}
+            <div class="mt-2">{{ artist.bio|linebreaks }}</div>
+        {% endif %}
+    </div>
+</div>
+
+<a href="{% url 'artist-list' %}" class="btn btn-outline-secondary mt-4">&larr; All Artists</a>
+{% endblock %}

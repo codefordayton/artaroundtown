@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Galleries &amp; Venues — Art Around Town Dayton{% endblock %}
+
+{% block content %}
+<h1>Galleries &amp; Venues</h1>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-1">
+{% for venue in venues %}
+    <div class="col venue-card">
+        <div class="card h-100">
+            {% if venue.logo %}
+                <div class="card-img-top d-flex align-items-center justify-content-center p-3 bg-light" style="height:120px">
+                    <img src="{{ venue.logo.url }}" class="img-fluid" style="max-height:100px;object-fit:contain" alt="{{ venue.name }} logo">
+                </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{% url 'venue-detail' venue.slug %}" class="text-decoration-none">{{ venue.name }}</a>
+                </h5>
+                <p class="card-text text-muted mb-1">{{ venue.city }}, {{ venue.state }}</p>
+                {% if venue.address %}
+                    <p class="card-text small text-muted">{{ venue.address }}</p>
+                {% endif %}
+            </div>
+            {% if venue.website %}
+            <div class="card-footer bg-transparent">
+                <a href="{{ venue.website }}" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener">Visit Website</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% empty %}
+    <p class="text-muted col-12">No venues listed yet.</p>
+{% endfor %}
+</div>
+{% endblock %}

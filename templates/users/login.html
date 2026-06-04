@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Log In — Art Around Town Dayton{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <h1 class="mb-4">Log In</h1>
+
+    {% if form.errors %}
+      <div class="alert alert-danger">Username or password is incorrect.</div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+
+      <div class="mb-3">
+        <label for="id_username" class="form-label fw-bold">Username</label>
+        <input type="text" name="username" id="id_username" class="form-control form-control-lg" autofocus autocomplete="username" required>
+      </div>
+      <div class="mb-4">
+        <label for="id_password" class="form-label fw-bold">Password</label>
+        <input type="password" name="password" id="id_password" class="form-control form-control-lg" autocomplete="current-password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-lg w-100">Log In</button>
+    </form>
+
+    <p class="text-center mt-4 text-muted">
+      Don't have an account?
+      <a href="{% url 'register' %}" class="fw-bold">Request access</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

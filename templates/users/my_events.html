@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}My Events — Art Around Town Dayton{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="mb-0">My Events</h1>
+  {% if request.user.is_approved_submitter or request.user.is_staff %}
+    <a href="{% url 'submit-event' %}" class="btn btn-primary">+ Submit New Event</a>
+  {% endif %}
+</div>
+
+{% if events %}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Event</th>
+          <th>Date</th>
+          <th>Location</th>
+          <th>Status</th>
+          <th>Submitted</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for event in events %}
+        <tr>
+          <td>
+            {% if event.status == 'approved' %}
+              <a href="{% url 'event-detail' event.slug %}" class="fw-bold">{{ event.title }}</a>
+            {% else %}
+              <span class="fw-bold">{{ event.title }}</span>
+            {% endif %}
+          </td>
+          <td class="text-nowrap">{{ event.start_date|date:"M j, Y" }}</td>
+          <td>{{ event.display_location }}</td>
+          <td>
+            {% if event.status == 'approved' %}
+              <span class="badge rounded-pill" style="background-color:var(--color-secondary)">Approved</span>
+            {% elif event.status == 'pending' %}
+              <span class="badge rounded-pill bg-warning text-dark">Pending Review</span>
+            {% else %}
+              <span class="badge rounded-pill bg-secondary">Rejected</span>
+            {% endif %}
+          </td>
+          <td class="text-muted small text-nowrap">{{ event.created_at|date:"M j, Y" }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="text-center py-5 text-muted">
+    <p class="lead">You haven't submitted any events yet.</p>
+    {% if request.user.is_approved_submitter or request.user.is_staff %}
+      <a href="{% url 'submit-event' %}" class="btn btn-primary">Submit Your First Event</a>
+    {% else %}
+      <p>Your account is pending approval. You'll be able to submit events once an admin approves you.</p>
+    {% endif %}
+  </div>
+{% endif %}
+{% endblock %}

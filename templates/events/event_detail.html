@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ event.title }} — Art Around Town Dayton{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-{% if event.image %}8{% else %}12{% endif %}">
+        <h1>{{ event.title }}</h1>
+
+        <dl class="row mt-3 event-meta">
+            <dt class="col-sm-4">Dates</dt>
+            <dd class="col-sm-8">
+                {{ event.start_date|date:"F j, Y" }}
+                {% if event.end_date %}&ndash; {{ event.end_date|date:"F j, Y" }}{% endif %}
+            </dd>
+
+            {% if event.opening_reception_date %}
+            <dt class="col-sm-4">Opening Reception</dt>
+            <dd class="col-sm-8">
+                {{ event.opening_reception_date|date:"F j, Y" }}
+                {% if event.opening_reception_time %}at {{ event.opening_reception_time|time:"g:i A" }}{% endif %}
+            </dd>
+            {% endif %}
+
+            {% if event.artist_talk_date %}
+            <dt class="col-sm-4">Artist Talk</dt>
+            <dd class="col-sm-8">
+                {{ event.artist_talk_date|date:"F j, Y" }}
+                {% if event.artist_talk_time %}at {{ event.artist_talk_time|time:"g:i A" }}{% endif %}
+            </dd>
+            {% endif %}
+
+            {% if event.closing_reception_date %}
+            <dt class="col-sm-4">Closing Reception</dt>
+            <dd class="col-sm-8">
+                {{ event.closing_reception_date|date:"F j, Y" }}
+                {% if event.closing_reception_time %}at {{ event.closing_reception_time|time:"g:i A" }}{% endif %}
+            </dd>
+            {% endif %}
+
+            <dt class="col-sm-4">Location</dt>
+            <dd class="col-sm-8">
+                {% if event.venue %}
+                    <a href="{% url 'venue-detail' event.venue.slug %}">{{ event.venue.name }}</a>
+                    {% if event.venue.address %}
+                        <br><small class="text-muted">{{ event.venue.address }}, {{ event.venue.city }}</small>
+                    {% endif %}
+                {% else %}
+                    {{ event.location_name }}
+                {% endif %}
+            </dd>
+        </dl>
+
+        {% if event.url %}
+            <a href="{{ event.url }}" class="btn btn-primary mb-4" target="_blank" rel="noopener">More Info &rarr;</a>
+        {% endif %}
+
+        {% if event.description %}
+            <div class="mt-2">{{ event.description|linebreaks }}</div>
+        {% endif %}
+    </div>
+
+    {% if event.image %}
+    <div class="col-md-4">
+        <img src="{{ event.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ event.title }}">
+    </div>
+    {% endif %}
+</div>
+
+<a href="{% url 'calendar' %}" class="btn btn-outline-secondary mt-4">&larr; Back to Calendar</a>
+{% endblock %}

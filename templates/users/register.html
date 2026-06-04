@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Request Access — Art Around Town Dayton{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <h1 class="mb-1">Request Submission Access</h1>
+    <p class="text-muted mb-4">
+      Create an account to submit events to the Art Around Town calendar.
+      An admin will review your request — you'll receive an email when approved.
+    </p>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="row g-3 mb-3">
+        <div class="col-sm-6">
+          <label class="form-label fw-bold">First name <span class="text-danger">*</span></label>
+          <input type="text" name="first_name" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
+                 value="{{ form.first_name.value|default:'' }}" required>
+          {% for e in form.first_name.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="col-sm-6">
+          <label class="form-label fw-bold">Last name <span class="text-danger">*</span></label>
+          <input type="text" name="last_name" class="form-control {% if form.last_name.errors %}is-invalid{% endif %}"
+                 value="{{ form.last_name.value|default:'' }}" required>
+          {% for e in form.last_name.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Email <span class="text-danger">*</span></label>
+        <input type="email" name="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+               value="{{ form.email.value|default:'' }}" required>
+        {% for e in form.email.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Username <span class="text-danger">*</span></label>
+        <input type="text" name="username" class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+               value="{{ form.username.value|default:'' }}" autocomplete="username" required>
+        {% for e in form.username.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Organization / affiliation</label>
+        <input type="text" name="organization" class="form-control"
+               value="{{ form.organization.value|default:'' }}"
+               placeholder="Gallery, arts org, school, etc. (optional)">
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-sm-6">
+          <label class="form-label fw-bold">Password <span class="text-danger">*</span></label>
+          <input type="password" name="password1" class="form-control {% if form.password1.errors %}is-invalid{% endif %}"
+                 autocomplete="new-password" required>
+          {% for e in form.password1.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          <div class="form-text">At least 8 characters, not too common.</div>
+        </div>
+        <div class="col-sm-6">
+          <label class="form-label fw-bold">Confirm password <span class="text-danger">*</span></label>
+          <input type="password" name="password2" class="form-control {% if form.password2.errors %}is-invalid{% endif %}"
+                 autocomplete="new-password" required>
+          {% for e in form.password2.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+          {% for e in form.non_field_errors %}{{ e }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <button type="submit" class="btn btn-primary btn-lg w-100">Request Access</button>
+    </form>
+
+    <p class="text-center mt-4 text-muted">
+      Already have an account? <a href="{% url 'login' %}" class="fw-bold">Log in</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Around Town Dayton — Calendar</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/embed.css' %}">
+</head>
+<body>
+<div id="calendar"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var params = new URLSearchParams(window.location.search);
+    var eventsUrl = '/api/events/calendar/';
+    var urlParams = [];
+    if (params.get('venue')) urlParams.push('venue=' + encodeURIComponent(params.get('venue')));
+    if (urlParams.length) eventsUrl += '?' + urlParams.join('&');
+
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: params.get('view') || 'listMonth',
+        headerToolbar: {
+            left: 'prev,next',
+            center: 'title',
+            right: 'dayGridMonth,listMonth'
+        },
+        events: { url: eventsUrl },
+        eventClick: function (info) {
+            info.jsEvent.preventDefault();
+            var slug = info.event.extendedProps.slug;
+            if (slug) {
+                window.open('https://artaroundtowndayton.org/events/' + slug + '/', '_blank');
+            }
+        }
+    });
+    calendar.render();
+});
+</script>
+</body>
+</html>
