@@ -9,6 +9,10 @@ from .forms import EventSubmissionForm
 from .models import Event, EventStatus
 
 
+class LandingView(TemplateView):
+    template_name = 'events/landing.html'
+
+
 class CalendarView(TemplateView):
     template_name = 'events/calendar.html'
 
