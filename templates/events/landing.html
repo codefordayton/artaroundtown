@@ -5,263 +5,271 @@
 
 {% block extra_head %}
 <style>
-  /* Break the hero out of the base .container */
-  .landing-hero {
+  /* Full-bleed helper — break out of the base .container */
+  .bleed {
     margin-left: calc(-50vw + 50%);
     margin-right: calc(-50vw + 50%);
-    margin-top: -2rem; /* cancel the container's py-4 top padding */
-    padding: 5rem 1.5rem 4rem;
-    background: linear-gradient(135deg, var(--color-dark) 0%, #2d2847 60%, #1a3a38 100%);
-    position: relative;
-    overflow: hidden;
   }
 
-  .landing-hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+  /* ── Hero: bright, warm, handmade ──────────────────────────────── */
+  .landing-hero {
+    margin-top: -2rem;                 /* cancel container's top padding */
+    padding: 4.5rem 1.5rem 5.5rem;
     background:
-      radial-gradient(ellipse at 70% 50%, rgba(42,157,143,0.18) 0%, transparent 60%),
-      radial-gradient(ellipse at 15% 85%, rgba(232,82,58,0.14) 0%, transparent 50%);
-    pointer-events: none;
+      radial-gradient(ellipse at 80% 20%, rgba(232,82,58,0.10) 0%, transparent 55%),
+      radial-gradient(ellipse at 10% 90%, rgba(42,157,143,0.10) 0%, transparent 55%),
+      linear-gradient(160deg, #FFEEDD 0%, #FFF7F0 55%, #FDFBF7 100%);
+    border-bottom: 4px solid transparent;
+    border-image: linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-secondary), var(--color-purple)) 1;
   }
 
-  .landing-hero::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-secondary), var(--color-purple));
-  }
-
-  .hero-inner {
-    position: relative;
-    z-index: 1;
-    max-width: 680px;
-  }
+  .hero-inner { max-width: 760px; margin: 0 auto; text-align: center; }
 
   .hero-eyebrow {
     display: inline-block;
-    background: rgba(244,162,97,0.15);
-    border: 1px solid rgba(244,162,97,0.35);
-    color: var(--color-accent);
-    font-size: 0.78rem;
+    color: var(--color-primary);
+    font-size: 0.8rem;
     font-weight: 800;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    padding: 0.28rem 1rem;
-    border-radius: var(--radius-pill);
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
   }
 
   .hero-title {
-    color: #fff;
-    font-size: clamp(2.1rem, 5vw, 3.6rem);
+    color: var(--color-dark);
+    font-size: clamp(2.3rem, 5.5vw, 4rem);
     font-weight: 900;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    margin-bottom: 1.2rem;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 1.1rem;
   }
-
-  .hero-title span {
-    background: linear-gradient(90deg, var(--color-accent), var(--color-primary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  .hero-title em {
+    font-style: normal;
+    color: var(--color-primary);
+    position: relative;
+    white-space: nowrap;
+  }
+  /* hand-drawn underline swash under the accent word */
+  .hero-title em::after {
+    content: '';
+    position: absolute;
+    left: -2%; right: -2%; bottom: -0.12em;
+    height: 0.5em;
+    background: var(--color-accent);
+    opacity: 0.35;
+    border-radius: 50%;
+    z-index: -1;
+    transform: rotate(-1.2deg);
   }
 
   .hero-subtitle {
-    color: rgba(255,255,255,0.72);
-    font-size: 1.1rem;
+    color: #5a5560;
+    font-size: 1.12rem;
     font-weight: 600;
-    line-height: 1.65;
-    margin-bottom: 2rem;
+    line-height: 1.6;
+    max-width: 560px;
+    margin: 0 auto 2rem;
   }
 
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    align-items: center;
-  }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+  .hero-actions .btn { font-size: 1.02rem; padding: 0.7rem 1.9rem; }
 
-  .hero-actions .btn {
-    font-size: 1rem;
-    padding: 0.65rem 1.75rem;
+  /* ── Artwork strip ─────────────────────────────────────────────── */
+  .artwork-strip {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(190px, 1fr);
+    gap: 0;
+    margin-top: -3.5rem;              /* pull up so it overlaps the hero */
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.16);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 5px solid #fff;
   }
-
-  .btn-hero-primary {
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
-    color: #fff;
-  }
-  .btn-hero-primary:hover {
-    background-color: #c94428;
-    border-color: #c94428;
-    color: #fff;
-  }
-
-  .btn-hero-outline {
-    border: 2px solid rgba(255,255,255,0.35);
-    color: rgba(255,255,255,0.85);
-    background: transparent;
-  }
-  .btn-hero-outline:hover {
-    border-color: #fff;
-    color: #fff;
-    background: rgba(255,255,255,0.08);
-  }
-
-  .hero-note {
-    margin-top: 1.75rem;
-    color: rgba(255,255,255,0.42);
-    font-size: 0.82rem;
-    font-weight: 600;
-  }
-
-  .hero-note a {
-    color: rgba(255,255,255,0.6);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-  .hero-note a:hover { color: var(--color-accent); }
-
-  /* ── Feature cards ──────────────────────────────────────────── */
-  .features-section { padding: 3.5rem 0 2rem; }
-
-  .feature-card {
+  .artwork-tile {
+    position: relative;
     display: block;
-    text-decoration: none;
-    border-radius: var(--radius-card);
-    padding: 1.75rem;
-    height: 100%;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-    transition: transform var(--transition), box-shadow var(--transition);
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--color-light);
   }
-  .feature-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 28px rgba(0,0,0,0.12);
-    text-decoration: none;
+  .artwork-tile img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
   }
-  .feature-card .icon {
-    font-size: 2rem;
-    margin-bottom: 0.85rem;
-    display: block;
-  }
-  .feature-card h3 {
-    font-size: 1.15rem;
-    margin-bottom: 0.4rem;
-  }
-  .feature-card p {
-    font-size: 0.9rem;
-    color: var(--color-muted);
-    font-weight: 600;
-    margin-bottom: 1rem;
-    line-height: 1.5;
-  }
-  .feature-link {
+  .artwork-tile:hover img { transform: scale(1.06); }
+  .artwork-cap {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 1.4rem 0.85rem 0.7rem;
+    background: linear-gradient(transparent, rgba(30,27,46,0.82));
+    color: #fff;
     font-size: 0.82rem;
     font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
+    line-height: 1.25;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .artwork-tile:hover .artwork-cap { opacity: 1; transform: translateY(0); }
+  .artwork-cap small { display: block; font-weight: 700; opacity: 0.85; font-size: 0.72rem; margin-top: 0.15rem; }
+  /* hide overflow tiles on narrow screens */
+  @media (max-width: 767px) {
+    .artwork-strip { grid-auto-columns: minmax(140px, 1fr); margin-top: -2.5rem; }
+    .artwork-tile:nth-child(n+4) { display: none; }
   }
 
-  .fc-calendar  { background: linear-gradient(135deg,#fff5f3,#fff); border-top: 4px solid var(--color-primary); }
-  .fc-artists   { background: linear-gradient(135deg,#f3fbfa,#fff); border-top: 4px solid var(--color-secondary); }
-  .fc-galleries { background: linear-gradient(135deg,#fffaf4,#fff); border-top: 4px solid var(--color-accent); }
-  .fc-submit    { background: linear-gradient(135deg,#f8f4ff,#fff); border-top: 4px solid var(--color-purple); }
+  /* ── Upcoming + explore ────────────────────────────────────────── */
+  .home-section { padding: 3.5rem 0 1rem; }
+  .section-kicker {
+    font-size: 0.8rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.12em; color: var(--color-primary); margin-bottom: 0.25rem;
+  }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
+  .section-head h2 { font-size: 1.7rem; margin: 0; }
+  .section-head a { font-weight: 800; font-size: 0.9rem; white-space: nowrap; text-decoration: none; }
 
-  .fc-calendar  .feature-link { color: var(--color-primary); }
-  .fc-artists   .feature-link { color: var(--color-secondary); }
-  .fc-galleries .feature-link { color: #c47a0a; }
-  .fc-submit    .feature-link { color: var(--color-purple); }
-
-  /* ── About strip ────────────────────────────────────────────── */
-  .about-strip {
+  .event-row {
+    display: flex; align-items: center; gap: 1.1rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+    text-decoration: none;
+  }
+  .event-row:last-child { border-bottom: none; }
+  .event-date {
+    flex: 0 0 auto;
+    width: 62px; text-align: center;
     background: var(--color-light);
-    border-radius: 1rem;
-    padding: 2.25rem 2.5rem;
-    margin: 1rem 0 3rem;
+    border-radius: 10px;
+    padding: 0.5rem 0;
+    line-height: 1;
   }
-  .about-strip h2 { font-size: 1.4rem; margin-bottom: 0.6rem; }
-  .about-strip p  { color: var(--color-muted); font-weight: 600; font-size: 0.95rem; line-height: 1.7; margin-bottom: 0; }
-  .about-strip a  { color: var(--color-primary); }
+  .event-date .m { display: block; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--color-primary); letter-spacing: 0.06em; }
+  .event-date .d { display: block; font-size: 1.5rem; font-weight: 900; color: var(--color-dark); margin-top: 2px; }
+  .event-body { min-width: 0; }
+  .event-body h3 { font-size: 1.08rem; margin: 0 0 2px; color: var(--color-dark); }
+  .event-row:hover .event-body h3 { color: var(--color-primary); }
+  .event-body p { margin: 0; font-size: 0.87rem; font-weight: 600; color: var(--color-muted); }
+
+  .explore-card {
+    display: block; text-decoration: none;
+    border-radius: 14px; padding: 1.4rem 1.5rem; margin-bottom: 1rem;
+    color: #fff; font-weight: 800;
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+  .explore-card:hover { transform: translateX(4px); box-shadow: 0 8px 22px rgba(0,0,0,0.16); color: #fff; }
+  .explore-card span { display: block; font-size: 0.82rem; font-weight: 700; opacity: 0.9; margin-top: 0.2rem; }
+  .explore-artists  { background: linear-gradient(135deg, var(--color-secondary), #1f7d72); }
+  .explore-galleries{ background: linear-gradient(135deg, var(--color-accent), #d98230); }
+  .explore-submit   { background: linear-gradient(135deg, var(--color-purple), #5f4a86); }
+
+  /* ── About strip ───────────────────────────────────────────────── */
+  .about-strip {
+    background: var(--color-dark);
+    color: rgba(255,255,255,0.82);
+    border-radius: 1rem;
+    padding: 2.5rem 2.75rem;
+    margin: 2.5rem 0 3rem;
+  }
+  .about-strip h2 { color: #fff; font-size: 1.5rem; margin-bottom: 0.7rem; }
+  .about-strip p { font-weight: 600; font-size: 0.98rem; line-height: 1.75; margin: 0; }
+  .about-strip a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 3px; }
 </style>
 {% endblock %}
 
 {% block content %}
 
 {# ── Hero ──────────────────────────────────────────────────────── #}
-<section class="landing-hero">
+<section class="landing-hero bleed">
   <div class="hero-inner">
-    <span class="hero-eyebrow">Dayton, Ohio</span>
-    <h1 class="hero-title">
-      Discover <span>art</span><br>happening near you
-    </h1>
+    <span class="hero-eyebrow">Dayton, Ohio · Community Arts Calendar</span>
+    <h1 class="hero-title">Discover <em>art</em> happening near you</h1>
     <p class="hero-subtitle">
-      Art Around Town is your guide to galleries, exhibitions, and art events
-      across the Dayton area — updated by the community, free for everyone.
+      Openings, receptions, artist talks, and exhibitions across the Miami Valley —
+      gathered in one place by the community, free for everyone.
     </p>
     <div class="hero-actions">
-      <a href="{% url 'calendar' %}" class="btn btn-hero-primary">View the Calendar</a>
-      <a href="{% url 'submit-event' %}" class="btn btn-hero-outline">+ Submit an Event</a>
+      <a href="{% url 'calendar' %}" class="btn btn-primary">View the Calendar</a>
+      <a href="{% url 'submit-event' %}" class="btn btn-outline-dark">+ Submit an Event</a>
     </div>
-    <p class="hero-note">
-      The spiritual successor to
-      <a href="https://essentialartsdayton.org" target="_blank" rel="noopener">essentialartsdayton.org</a>
-      &mdash; same mission, new home.
-    </p>
   </div>
 </section>
 
-{# ── Feature cards ─────────────────────────────────────────────── #}
-<section class="features-section">
-  <div class="row g-4">
-    <div class="col-sm-6 col-lg-3">
-      <a href="{% url 'calendar' %}" class="feature-card fc-calendar">
-        <span class="icon">📅</span>
-        <h3>Events Calendar</h3>
-        <p>Browse openings, receptions, artist talks, and exhibitions happening this month and beyond.</p>
-        <span class="feature-link">Explore &rarr;</span>
+{# ── Artwork strip (real event images) ─────────────────────────── #}
+{% if artwork_events %}
+<div class="container">
+  <div class="artwork-strip">
+    {% for event in artwork_events %}
+      <a href="{% url 'event-detail' event.slug %}" class="artwork-tile">
+        <img src="{{ event.image.url }}" alt="{{ event.title }}" loading="lazy">
+        <span class="artwork-cap">
+          {{ event.title }}
+          <small>{{ event.start_date|date:"M j" }} · {{ event.display_location }}</small>
+        </span>
       </a>
-    </div>
-    <div class="col-sm-6 col-lg-3">
-      <a href="{% url 'artist-list' %}" class="feature-card fc-artists">
-        <span class="icon">🎨</span>
-        <h3>Local Artists</h3>
-        <p>Discover painters, sculptors, photographers, and more who call the Dayton area home.</p>
-        <span class="feature-link">Meet artists &rarr;</span>
-      </a>
-    </div>
-    <div class="col-sm-6 col-lg-3">
-      <a href="{% url 'venue-list' %}" class="feature-card fc-galleries">
-        <span class="icon">🏛️</span>
-        <h3>Galleries &amp; Venues</h3>
-        <p>Find the spaces that show work — from established galleries to alternative and pop-up venues.</p>
-        <span class="feature-link">Find venues &rarr;</span>
-      </a>
-    </div>
-    <div class="col-sm-6 col-lg-3">
-      <a href="{% url 'submit-event' %}" class="feature-card fc-submit">
-        <span class="icon">✏️</span>
-        <h3>Share Your Event</h3>
-        <p>Got a show or opening coming up? Submit it here and reach the whole Dayton arts community.</p>
-        <span class="feature-link">Submit now &rarr;</span>
-      </a>
-    </div>
+    {% endfor %}
   </div>
-</section>
+</div>
+{% endif %}
+
+{# ── Upcoming events + explore ─────────────────────────────────── #}
+<div class="row home-section g-5">
+  <div class="col-lg-7">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">What's on</div>
+        <h2>Upcoming Events</h2>
+      </div>
+      <a href="{% url 'calendar' %}">Full calendar &rarr;</a>
+    </div>
+
+    {% for event in featured_events %}
+      <a href="{% url 'event-detail' event.slug %}" class="event-row">
+        <div class="event-date">
+          <span class="m">{{ event.start_date|date:"M" }}</span>
+          <span class="d">{{ event.start_date|date:"j" }}</span>
+        </div>
+        <div class="event-body">
+          <h3>{{ event.title }}</h3>
+          <p>{{ event.display_location }}</p>
+        </div>
+      </a>
+    {% empty %}
+      <p class="text-muted">No upcoming events yet — check back soon, or
+        <a href="{% url 'submit-event' %}">submit the first one</a>.</p>
+    {% endfor %}
+  </div>
+
+  <div class="col-lg-5">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Dig in</div>
+        <h2>Explore</h2>
+      </div>
+    </div>
+    <a href="{% url 'artist-list' %}" class="explore-card explore-artists">
+      Local Artists <span>Painters, sculptors, photographers &amp; more →</span>
+    </a>
+    <a href="{% url 'venue-list' %}" class="explore-card explore-galleries">
+      Galleries &amp; Venues <span>The spaces that show the work →</span>
+    </a>
+    <a href="{% url 'submit-event' %}" class="explore-card explore-submit">
+      Share Your Event <span>Reach the whole Dayton arts community →</span>
+    </a>
+  </div>
+</div>
 
 {# ── About strip ───────────────────────────────────────────────── #}
 <div class="about-strip">
   <h2>About Art Around Town</h2>
   <p>
-    Art Around Town Dayton is a community-powered calendar and directory for the local arts scene.
-    It carries forward the work of
-    <a href="https://essentialartsdayton.org" target="_blank" rel="noopener">Essential Arts Dayton</a>
-    — connecting artists, galleries, and art lovers in one place.
-    Anyone can browse events; artists and venues can
-    <a href="{% url 'register' %}">create a free account</a> to submit and manage their listings.
+    A community-powered calendar and directory for the Dayton arts scene, carrying forward
+    the work of <a href="https://essentialartsdayton.org" target="_blank" rel="noopener">Essential Arts Dayton</a>.
+    Anyone can browse; artists and venues can
+    <a href="{% url 'register' %}">create a free account</a> to submit and manage listings.
   </p>
 </div>
 

@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.core.mail import mail_admins
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.generic import DetailView, TemplateView
@@ -11,6 +12,36 @@ from .models import Event, EventStatus
 
 class LandingView(TemplateView):
     template_name = 'events/landing.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        today = timezone.localdate()
+
+        upcoming = (
+            Event.objects.filter(status=EventStatus.APPROVED, start_date__gte=today)
+            .select_related('venue')
+            .order_by('start_date')
+        )
+
+        # Featured list for the "Upcoming" column
+        ctx['featured_events'] = upcoming[:5]
+
+        # Real artwork for the thumbnail strip: upcoming events that have an
+        # image, falling back to any approved event with an image so the strip
+        # isn't empty early on.
+        artwork = list(upcoming.exclude(image='')[:6])
+        if len(artwork) < 6:
+            seen = {e.pk for e in artwork}
+            extra = (
+                Event.objects.filter(status=EventStatus.APPROVED)
+                .exclude(image='')
+                .exclude(pk__in=seen)
+                .order_by('-start_date')[: 6 - len(artwork)]
+            )
+            artwork.extend(extra)
+        ctx['artwork_events'] = artwork
+
+        return ctx
 
 
 class CalendarView(TemplateView):
