@@ -13,17 +13,32 @@
 
   /* ── Hero: bright, warm, handmade ──────────────────────────────── */
   .landing-hero {
+    position: relative;
+    overflow: hidden;
     margin-top: -2rem;                 /* cancel container's top padding */
     padding: 4.5rem 1.5rem 5.5rem;
-    background:
-      radial-gradient(ellipse at 80% 20%, rgba(232,82,58,0.10) 0%, transparent 55%),
-      radial-gradient(ellipse at 10% 90%, rgba(42,157,143,0.10) 0%, transparent 55%),
-      linear-gradient(160deg, #FFEEDD 0%, #FFF7F0 55%, #FDFBF7 100%);
+    background: #FFF7F0;               /* fallback under the images */
     border-bottom: 4px solid transparent;
     border-image: linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-secondary), var(--color-purple)) 1;
   }
 
-  .hero-inner { max-width: 760px; margin: 0 auto; text-align: center; }
+  /* rotating predefined images */
+  .hero-bg { position: absolute; inset: 0; z-index: 0; }
+  .hero-slide {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    opacity: 0; transition: opacity 1.4s ease;
+  }
+  .hero-slide.is-active { opacity: 1; }
+  /* warm veil so dark text stays legible over any image */
+  .hero-veil {
+    position: absolute; inset: 0; z-index: 1;
+    background:
+      radial-gradient(ellipse 60% 70% at 50% 45%, rgba(255,247,240,0.72) 0%, rgba(255,247,240,0.42) 100%),
+      linear-gradient(160deg, rgba(255,240,226,0.55) 0%, rgba(255,247,240,0.5) 55%, rgba(253,251,247,0.62) 100%);
+  }
+
+  .hero-inner { position: relative; z-index: 2; max-width: 760px; margin: 0 auto; text-align: center; }
 
   .hero-eyebrow {
     display: inline-block;
@@ -43,23 +58,26 @@
     letter-spacing: -0.025em;
     margin-bottom: 1.1rem;
   }
+  /* accent word with a hand-drawn underline that tracks the word exactly */
   .hero-title em {
+    position: relative;
+    display: inline-block;
     font-style: normal;
     color: var(--color-primary);
-    position: relative;
-    white-space: nowrap;
   }
-  /* hand-drawn underline swash under the accent word */
-  .hero-title em::after {
-    content: '';
+  .hero-title .swish {
     position: absolute;
-    left: -2%; right: -2%; bottom: -0.12em;
-    height: 0.5em;
-    background: var(--color-accent);
-    opacity: 0.35;
-    border-radius: 50%;
-    z-index: -1;
-    transform: rotate(-1.2deg);
+    left: 0; width: 100%;
+    bottom: 0.08em;
+    height: 0.26em;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .hero-title .swish path {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 9;
+    stroke-linecap: round;
   }
 
   .hero-subtitle {
@@ -184,9 +202,16 @@
 
 {# ── Hero ──────────────────────────────────────────────────────── #}
 <section class="landing-hero bleed">
+  <div class="hero-bg" id="heroBg">
+    {% for img in hero_images %}
+      <div class="hero-slide{% if forloop.first %} is-active{% endif %}"
+           style="background-image:url('{% static img %}')"></div>
+    {% endfor %}
+  </div>
+  <div class="hero-veil"></div>
   <div class="hero-inner">
     <span class="hero-eyebrow">Dayton, Ohio · Community Arts Calendar</span>
-    <h1 class="hero-title">Discover <em>art</em> happening near you</h1>
+    <h1 class="hero-title">Discover <em>art<svg class="swish" viewBox="0 0 300 40" preserveAspectRatio="none"><path d="M6,26 C55,12 105,32 152,22 C205,11 255,30 294,18"/></svg></em> happening near you</h1>
     <p class="hero-subtitle">
       Openings, receptions, artist talks, and exhibitions across the Miami Valley —
       gathered in one place by the community, free for everyone.
@@ -273,4 +298,20 @@
   </p>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    var slides = document.querySelectorAll('#heroBg .hero-slide');
+    if (slides.length < 2) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var i = 0;
+    setInterval(function () {
+      slides[i].classList.remove('is-active');
+      i = (i + 1) % slides.length;
+      slides[i].classList.add('is-active');
+    }, 5000);
+  })();
+</script>
 {% endblock %}

@@ -13,9 +13,19 @@ from .models import Event, EventStatus
 class LandingView(TemplateView):
     template_name = 'events/landing.html'
 
+    # Predefined rotating hero images. Drop replacements into
+    # static/img/hero/ and update this list to change what rotates.
+    HERO_IMAGES = [
+        'img/hero/hero1.jpg',
+        'img/hero/hero2.jpg',
+        'img/hero/hero3.jpg',
+        'img/hero/hero4.jpg',
+    ]
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         today = timezone.localdate()
+        ctx['hero_images'] = self.HERO_IMAGES
 
         upcoming = (
             Event.objects.filter(status=EventStatus.APPROVED, start_date__gte=today)
