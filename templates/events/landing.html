@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Art Around Town Dayton — Your guide to the Dayton art scene{% endblock %}
+{% block title %}Art Around Town — Dayton's Arts &amp; Culture Calendar{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -13,42 +13,27 @@
 
   /* ── Hero: bright, warm, handmade ──────────────────────────────── */
   .landing-hero {
-    position: relative;
-    overflow: hidden;
     margin-top: -2rem;                 /* cancel container's top padding */
-    padding: 4.5rem 1.5rem 5.5rem;
-    background: #FFF7F0;               /* fallback under the images */
+    padding: 3rem 1.5rem 5.5rem;
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 30%, rgba(255,247,240,0.6), transparent 70%),
+      linear-gradient(160deg, #FFEEDD 0%, #FFF7F0 55%, #FDFBF7 100%);
     border-bottom: 4px solid transparent;
     border-image: linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-secondary), var(--color-purple)) 1;
   }
 
-  /* rotating predefined images */
-  .hero-bg { position: absolute; inset: 0; z-index: 0; }
-  .hero-slide {
-    position: absolute; inset: 0;
-    background-size: cover; background-position: center;
-    opacity: 0; transition: opacity 1.4s ease;
-  }
-  .hero-slide.is-active { opacity: 1; }
-  /* warm veil so dark text stays legible over any image */
-  .hero-veil {
-    position: absolute; inset: 0; z-index: 1;
-    background:
-      radial-gradient(ellipse 60% 70% at 50% 45%, rgba(255,247,240,0.72) 0%, rgba(255,247,240,0.42) 100%),
-      linear-gradient(160deg, rgba(255,240,226,0.55) 0%, rgba(255,247,240,0.5) 55%, rgba(253,251,247,0.62) 100%);
+  /* branded masthead banner (native 600×200, kept crisp) */
+  .hero-banner {
+    display: block;
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    margin: 0 auto 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 26px rgba(0,0,0,0.16);
   }
 
-  .hero-inner { position: relative; z-index: 2; max-width: 760px; margin: 0 auto; text-align: center; }
-
-  .hero-eyebrow {
-    display: inline-block;
-    color: var(--color-primary);
-    font-size: 0.8rem;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-  }
+  .hero-inner { max-width: 760px; margin: 0 auto; text-align: center; }
 
   .hero-title {
     color: var(--color-dark);
@@ -58,26 +43,10 @@
     letter-spacing: -0.025em;
     margin-bottom: 1.1rem;
   }
-  /* accent word with a hand-drawn underline that tracks the word exactly */
   .hero-title em {
-    position: relative;
-    display: inline-block;
     font-style: normal;
     color: var(--color-primary);
-  }
-  .hero-title .swish {
-    position: absolute;
-    left: 0; width: 100%;
-    bottom: 0.08em;
-    height: 0.26em;
-    overflow: visible;
-    pointer-events: none;
-  }
-  .hero-title .swish path {
-    fill: none;
-    stroke: var(--color-accent);
-    stroke-width: 9;
-    stroke-linecap: round;
+    white-space: nowrap;
   }
 
   .hero-subtitle {
@@ -202,19 +171,13 @@
 
 {# ── Hero ──────────────────────────────────────────────────────── #}
 <section class="landing-hero bleed">
-  <div class="hero-bg" id="heroBg">
-    {% for img in hero_images %}
-      <div class="hero-slide{% if forloop.first %} is-active{% endif %}"
-           style="background-image:url('{% static img %}')"></div>
-    {% endfor %}
-  </div>
-  <div class="hero-veil"></div>
   <div class="hero-inner">
-    <span class="hero-eyebrow">Dayton, Ohio · Community Arts Calendar</span>
-    <h1 class="hero-title">Discover <em>art<svg class="swish" viewBox="0 0 300 40" preserveAspectRatio="none"><path d="M6,26 C55,12 105,32 152,22 C205,11 255,30 294,18"/></svg></em> happening near you</h1>
+    <img class="hero-banner" src="{% static 'img/aat-dsa-banner.png' %}"
+         alt="Art Around Town — Dayton, Ohio. Brought to you by the Dayton Society of Artists.">
+    <h1 class="hero-title">Be in the know about what's going on in <em>Arts&nbsp;&amp;&nbsp;Culture</em> in the Miami Valley</h1>
     <p class="hero-subtitle">
-      Openings, receptions, artist talks, and exhibitions across the Miami Valley —
-      gathered in one place by the community, free for everyone.
+      Art Around Town is your one-stop resource for Concerts, Theater &amp; Dance
+      Performances, Exhibition Openings, Galleries and Museums.
     </p>
     <div class="hero-actions">
       <a href="{% url 'calendar' %}" class="btn btn-primary">View the Calendar</a>
@@ -291,27 +254,17 @@
 <div class="about-strip">
   <h2>About Art Around Town</h2>
   <p>
-    A community-powered calendar and directory for the Dayton arts scene, carrying forward
-    the work of <a href="https://essentialartsdayton.org" target="_blank" rel="noopener">Essential Arts Dayton</a>.
-    Anyone can browse; artists and venues can
+    When it comes to Arts &amp; Culture, Dayton is known for punching above its weight.
+    In addition to the legacy organizations — Dayton Art Institute, Dayton Philharmonic,
+    Dayton Contemporary Dance Company, Dayton Ballet, Dayton Opera and Human Race Theater
+    Company — Dayton boasts dozens of artists organizations from The Bach Society to
+    The Theater Guild to Dayton Society of Artists. Find out what is happening with your
+    favorite organizations or discover a new favorite organization.
+  </p>
+  <p class="mt-3 mb-0">
+    Anyone can browse; artists and organizations can
     <a href="{% url 'register' %}">create a free account</a> to submit and manage listings.
   </p>
 </div>
 
-{% endblock %}
-
-{% block extra_js %}
-<script>
-  (function () {
-    var slides = document.querySelectorAll('#heroBg .hero-slide');
-    if (slides.length < 2) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var i = 0;
-    setInterval(function () {
-      slides[i].classList.remove('is-active');
-      i = (i + 1) % slides.length;
-      slides[i].classList.add('is-active');
-    }, 5000);
-  })();
-</script>
 {% endblock %}
