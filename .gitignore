@@ -49,3 +49,6 @@ npm-debug.log
 yarn-error.log
 dist/
 .cache/
+
+# Fetched data snapshots (generated)
+/data/*.json

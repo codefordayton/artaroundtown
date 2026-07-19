@@ -4,17 +4,18 @@ from .models import Event, EventStatus
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ['title', 'start_date', 'display_location', 'status', 'submitted_by', 'created_at']
-    list_filter = ['status', 'start_date']
+    list_display = ['title', 'start_date', 'category', 'display_location', 'status', 'created_at']
+    list_filter = ['status', 'category', 'start_date']
     search_fields = ['title', 'description', 'submitter_name', 'submitter_email']
     readonly_fields = ['created_at', 'updated_at', 'submitted_by', 'submitter_name', 'submitter_email']
     actions = ['approve_events', 'reject_events']
 
     fieldsets = (
-        (None, {'fields': ('title', 'slug', 'status')}),
+        (None, {'fields': ('title', 'slug', 'category', 'status')}),
         ('Submitter', {'fields': ('submitted_by', 'submitter_name', 'submitter_email')}),
         ('Dates', {'fields': (
             'start_date', 'end_date',
+            'start_time', 'end_time',
             'opening_reception_date', 'opening_reception_time',
             'artist_talk_date', 'artist_talk_time',
             'closing_reception_date', 'closing_reception_time',

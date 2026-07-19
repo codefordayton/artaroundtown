@@ -9,9 +9,25 @@ class EventStatus(models.TextChoices):
     REJECTED = 'rejected', 'Rejected'
 
 
+class EventCategory(models.TextChoices):
+    VISUAL_ARTS = 'visual_arts', 'Visual Arts'
+    MUSIC = 'music', 'Music'
+    THEATER = 'theater', 'Theater'
+    DANCE = 'dance', 'Dance'
+    MUSEUMS = 'museums', 'Museums'
+    OTHER = 'other', 'Other'
+
+
 class Event(models.Model):
     title = models.CharField(max_length=300)
     slug = models.SlugField(unique=True, blank=True)
+
+    category = models.CharField(
+        max_length=20,
+        choices=EventCategory.choices,
+        blank=True,
+        db_index=True,
+    )
 
     # Submitter info — stored explicitly so it survives account deletion
     submitter_name = models.CharField(max_length=200, blank=True)
@@ -26,6 +42,10 @@ class Event(models.Model):
 
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
+
+    # Optional clock times for timed events (talks, performances, classes)
+    start_time = models.TimeField(null=True, blank=True)
+    end_time = models.TimeField(null=True, blank=True)
 
     opening_reception_date = models.DateField(null=True, blank=True)
     opening_reception_time = models.TimeField(null=True, blank=True)
