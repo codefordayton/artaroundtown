@@ -20,7 +20,7 @@ class EventCategory(models.TextChoices):
 
 class Event(models.Model):
     title = models.CharField(max_length=300)
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True, blank=True, max_length=320)
 
     category = models.CharField(
         max_length=20,

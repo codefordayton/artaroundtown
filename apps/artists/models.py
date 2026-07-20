@@ -22,7 +22,7 @@ class Medium(models.Model):
 
 class Artist(models.Model):
     name = models.CharField(max_length=200)
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True, blank=True, max_length=220)
     bio = models.TextField(blank=True)
     mediums = models.ManyToManyField(Medium, blank=True)
     profile_image = models.ImageField(upload_to='artists/profiles/', blank=True)

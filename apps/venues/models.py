@@ -4,7 +4,7 @@ from django.utils.text import slugify
 
 class Venue(models.Model):
     name = models.CharField(max_length=200)
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True, blank=True, max_length=220)
     address = models.CharField(max_length=200, blank=True)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=2, default='OH')
