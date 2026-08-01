@@ -35,12 +35,13 @@ def upload_artist_images(artist: dict):
                             aws_access_key_id=ACCESS_TOKEN,
                             aws_secret_access_key=SECRET_KEY)
 
+    
+    # upload profile picture 
     profile_pic_url = artist['profile_picture']
     _, image_extension = os.path.splitext(artist['profile_picture'])
-    profile_pic_object_key = f"media/artists/{artist['uuid']}/profile_picture{image_extension}"
+    profile_pic_object_key = f"media/artists/{artist['id']}/profile_picture{image_extension}"
     profile_img_response = requests.get(url=profile_pic_url, stream=True)
     
-    # upload profile picture
     s3_client.upload_fileobj(
         Fileobj=profile_img_response.raw,
         Bucket=BUCKET_NAME,
@@ -49,7 +50,7 @@ def upload_artist_images(artist: dict):
 
     # upload sample pieces
     for piece in artist['pieces']:
-        piece_object_key = f"media/artists/{artist['uuid']}/sample-pieces/{piece['slug']}"
+        piece_object_key = f"media/artists/{artist['id']}/sample-pieces/{piece['slug']}"
         url = piece['url']
         piece_img_response = requests.get(url=url, stream=True)
 
@@ -59,10 +60,16 @@ def upload_artist_images(artist: dict):
             Key=piece_object_key
         )
 
-def extract_artist_images(csv_file):
+def extract_artists(csv_file):
     NAME_IDX = 0 
-    SAMPLE_PIECES_IDX = 11
+    SLUG_IDX = 16
+    BIO_IDX = 5
+    MEDIUMS_IDX = 14
     PROFILE_PICTURE_IDX = 15
+    PRIMARY_WEBSITE_IDX = 9
+    SECONDARY_WEBSITE_IDX = 10 
+    EMAIL_IDX = 2
+    SAMPLE_PIECES_IDX = 11
     WIX_URI_PREFIX = "wix:image://v1/"
     WIX_BASE_URL = "https://static.wixstatic.com/media/"
 
@@ -71,36 +78,43 @@ def extract_artist_images(csv_file):
     next(artist_reader)
 
     for artist in artist_reader:
-        name = artist[NAME_IDX]
-        sample_pieces = ast.literal_eval(artist[SAMPLE_PIECES_IDX])
+        # clean profile pic url 
         profile_picture_url = artist[PROFILE_PICTURE_IDX]
-
         if profile_picture_url.startswith(WIX_URI_PREFIX): 
             profile_picture_slug = profile_picture_url[len(WIX_URI_PREFIX):].split("/", 1)[0]
             profile_picture_url = WIX_BASE_URL + profile_picture_slug
 
         # clean sample_pieces to essential attributes
+        sample_pieces = ast.literal_eval(artist[SAMPLE_PIECES_IDX])
         for idx, piece in enumerate(sample_pieces):
             piece_slug = piece['slug']
             piece_url = "https://static.wixstatic.com/media/" + piece_slug
             sample_pieces[idx] = {"slug": piece_slug, "url": piece_url}
         
         artist_object = {
-            "uuid": str(uuid.uuid4()),
-            "name": name,
+            "id": str(uuid.uuid4()),
+            "name": artist[NAME_IDX],
+            "slug": artist[SLUG_IDX], 
+            "bio": artist[BIO_IDX],
+            "mediums": artist[MEDIUMS_IDX],
+            "profile_picture": profile_picture_url,
+            "primary_website": artist[PRIMARY_WEBSITE_IDX],
+            "secondary_website": artist[SECONDARY_WEBSITE_IDX],
+            "email": artist[EMAIL_IDX],
             "pieces": sample_pieces,
-            "profile_picture": profile_picture_url 
         }
-
         artists.append(artist_object)
+        print(artist_object)
+        print()
     
     return artists
 
 if __name__ == "__main__":
     print("WARNING! This script may overwrite existing artist images.")
-    user_confirmation = input("continue? [y/N]")
+    user_confirmation = input("continue? [y/N] ")
     if user_confirmation.lower() == 'y': 
-        artists = extract_artist_images(open("./commands/Artists.csv")) 
+        artists = extract_artists(open("./Artists.csv")) 
+        exit()
         for a in artists:
             upload_artist_images(a)
     else:
