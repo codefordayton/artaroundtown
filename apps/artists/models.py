@@ -21,12 +21,14 @@ class Medium(models.Model):
 
 
 class Artist(models.Model):
+    id = models.CharField(max_length=36, primary_key=True)
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True, max_length=220)
     bio = models.TextField(blank=True)
     mediums = models.ManyToManyField(Medium, blank=True)
     profile_image = models.ImageField(upload_to='artists/profiles/', blank=True)
-    website = models.URLField(blank=True)
+    primary_website = models.URLField(blank=True)
+    secondary_website = models.URLField(blank=True) 
     email = models.EmailField(blank=True)
     primary_venue = models.ForeignKey(
         'venues.Venue',
@@ -61,3 +63,15 @@ class Artist(models.Model):
                 n += 1
             self.slug = slug
         super().save(*args, **kwargs)
+
+class Piece(models.Model):
+    slug = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
+    url = models.CharField(max_length=200)
+    artist_uuid = models.ForeignKey(
+        Artist, 
+        on_delete=models.CASCADE
+    )
+
+
+
