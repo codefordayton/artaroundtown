@@ -16,13 +16,25 @@ class Command(BaseCommand):
         csv_file = open(file_path, mode='r') 
 
         artists = extract_artists(csv_file=csv_file)
+
+        a = Artist(artists[0])
         for artist in artists:
             # upload to s3
             #upload_artist_images(artist)
                 
             # upload to database
-            a = Artist(artist)      
+            a = Artist(
+                id=artist['id'], 
+                name=artist['name'],
+                slug=artist['slug'],
+                bio=artist['bio'],
+                profile_image=artist['profile_picture'],
+                primary_website=artist['primary_website'],
+                secondary_website=artist['secondary_website'],
+                email=artist['email']
+            )      
             a.save()
+            #a.mediums.set(artist['mediums'])
 
         csv_file.close()
         self.stdout.write(self.style.SUCCESS("Sync successful!")) # type: ignore[attr-defined]

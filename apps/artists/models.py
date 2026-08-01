@@ -54,14 +54,6 @@ class Artist(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            base = slugify(self.name)
-            slug = base
-            n = 1
-            while Artist.objects.filter(slug=slug).exclude(pk=self.pk).exists():
-                slug = f'{base}-{n}'
-                n += 1
-            self.slug = slug
         super().save(*args, **kwargs)
 
 class Piece(models.Model):

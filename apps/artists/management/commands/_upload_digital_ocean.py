@@ -90,11 +90,17 @@ def extract_artists(csv_file):
             piece_slug = piece['slug']
             piece_url = "https://static.wixstatic.com/media/" + piece_slug
             sample_pieces[idx] = {"slug": piece_slug, "url": piece_url}
+
+        # clean slug
+        slug = artist[SLUG_IDX][8:]
+        slug_chars_to_remove = ".()"
+        translation_tbl = str.maketrans("", "", slug_chars_to_remove)
+        slug = slug.translate(translation_tbl)
         
         artist_object = {
             "id": str(uuid.uuid4()),
             "name": artist[NAME_IDX],
-            "slug": artist[SLUG_IDX], 
+            "slug": slug, 
             "bio": artist[BIO_IDX],
             "mediums": artist[MEDIUMS_IDX],
             "profile_picture": profile_picture_url,
@@ -104,8 +110,6 @@ def extract_artists(csv_file):
             "pieces": sample_pieces,
         }
         artists.append(artist_object)
-        print(artist_object)
-        print()
     
     return artists
 
@@ -114,7 +118,6 @@ if __name__ == "__main__":
     user_confirmation = input("continue? [y/N] ")
     if user_confirmation.lower() == 'y': 
         artists = extract_artists(open("./Artists.csv")) 
-        exit()
         for a in artists:
             upload_artist_images(a)
     else:
