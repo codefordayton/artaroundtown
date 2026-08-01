@@ -58,12 +58,8 @@ class Artist(models.Model):
 
 class Piece(models.Model):
     slug = models.CharField(max_length=200)
-    name = models.CharField(max_length=200)
     url = models.CharField(max_length=200)
-    artist_uuid = models.ForeignKey(
+    artist = models.ForeignKey(
         Artist, 
         on_delete=models.CASCADE
     )
-
-
-

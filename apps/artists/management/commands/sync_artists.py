@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand 
 from apps.artists.management.commands._upload_digital_ocean import extract_artists, upload_artist_images
-from apps.artists.models import Artist
-from apps.artists.models import Piece
+from apps.artists.models import Artist, Piece
 
 class Command(BaseCommand):
     help = """Syncs a local Artists.csv file with a Digital Ocean space and
@@ -14,7 +13,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         file_path = options['csvfile']
         csv_file = open(file_path, mode='r') 
-
         artists = extract_artists(csv_file=csv_file)
 
         a = Artist(artists[0])
@@ -22,7 +20,7 @@ class Command(BaseCommand):
             # upload to s3
             #upload_artist_images(artist)
                 
-            # upload to database
+            # upload artist to database
             a = Artist(
                 id=artist['id'], 
                 name=artist['name'],
@@ -34,7 +32,15 @@ class Command(BaseCommand):
                 email=artist['email']
             )      
             a.save()
-            #a.mediums.set(artist['mediums'])
+            
+            for piece in artist['pieces']:
+                p = Piece(
+                    slug=piece['slug'],
+                    url=piece['url'],
+                    artist=a
+                )
+                p.save()
+
 
         csv_file.close()
         self.stdout.write(self.style.SUCCESS("Sync successful!")) # type: ignore[attr-defined]

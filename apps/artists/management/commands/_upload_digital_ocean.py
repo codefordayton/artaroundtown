@@ -61,6 +61,9 @@ def upload_artist_images(artist: dict):
         )
 
 def extract_artists(csv_file):
+    """This function takes in a python File object and exports 
+    a list of artist objects (dicts)
+    """
     NAME_IDX = 0 
     SLUG_IDX = 16
     BIO_IDX = 5

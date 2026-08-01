@@ -25,7 +25,7 @@
         <a href="{% url 'artist-detail' artist.slug %}" class="text-decoration-none text-dark">
             <div class="card h-100 artist-card">
                 {% if artist.profile_image %}
-                    <img src="{{ artist.profile_image.url }}" class="card-img-top" alt="{{ artist.name }}" style="height:200px;object-fit:cover">
+                    <img src="{{ artist.profile_image }}" class="card-img-top" alt="{{ artist.name }}" style="height:200px;object-fit:cover">
                 {% else %}
                     <div class="bg-light d-flex align-items-center justify-content-center" style="height:200px">
                         <span class="text-muted" style="font-size:3rem">&#127912;</span>
