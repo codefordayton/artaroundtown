@@ -9,20 +9,19 @@ import uuid
 
 load_dotenv()
 
-
 def upload_artist_images(artist: dict):
     """This function uploads an artist's profile pic and art samples 
-    to digital ocean object storage
+    to digital ocean object storage. Note this will overwrite the Wix 
+    urls with digital ocean ones
 
     Object storage directory structure:
-
-    <artist_uuid>/
-    ├─ profile_picture.jpg/jpeg/png
-    ├─ sample-pieces/
-    │  ├─ <piece 1 slug>.jpg/jpeg/png
-    │  ├─ <piece 2 slug>.jpg/jpeg/png
-    │  ├─ ...
-    │  ├─ <piece n slug>.jpg/jpeg/png
+        <artist_uuid>/
+        ├─ profile_picture.jpg/jpeg/png
+        ├─ sample-pieces/
+        │  ├─ <piece 1 slug>.jpg/jpeg/png
+        │  ├─ <piece 2 slug>.jpg/jpeg/png
+        │  ├─ ...
+        │  ├─ <piece n slug>.jpg/jpeg/png
     """
     ACCESS_TOKEN = os.getenv('DIGITAL_OCEAN_PERSONAL_ACCESS_TOKEN')
     SECRET_KEY = os.getenv('DIGITAL_OCEAN_SECRET_KEY')
@@ -45,7 +44,10 @@ def upload_artist_images(artist: dict):
     s3_client.upload_fileobj(
         Fileobj=profile_img_response.raw,
         Bucket=BUCKET_NAME,
-        Key=profile_pic_object_key
+        Key=profile_pic_object_key,
+        ExtraArgs={
+            'ACL': 'public-read'
+        }
     )
 
     # upload sample pieces
@@ -57,8 +59,15 @@ def upload_artist_images(artist: dict):
         s3_client.upload_fileobj(
             Fileobj=piece_img_response.raw,
             Bucket=BUCKET_NAME,
-            Key=piece_object_key
+            Key=piece_object_key,
+            ExtraArgs={
+                'ACL': 'public-read'
+            }
         )
+
+        piece['url'] = f"https://{BUCKET_NAME}.nyc3.digitaloceanspaces.com/{piece_object_key}"
+
+    artist['profile_picture'] = f"https://{BUCKET_NAME}.nyc3.digitaloceanspaces.com/{profile_pic_object_key}"
 
 def extract_artists(csv_file):
     """This function takes in a python File object and exports 
@@ -72,7 +81,12 @@ def extract_artists(csv_file):
     PRIMARY_WEBSITE_IDX = 9
     SECONDARY_WEBSITE_IDX = 10 
     EMAIL_IDX = 2
+    PHONENUM_IDX = 4
+    ARTIST_STATEMENT_IDX = 6
+    FACEBOOK_IDX = 7
+    INSTAGRAM_IDX = 8
     SAMPLE_PIECES_IDX = 11
+
     WIX_URI_PREFIX = "wix:image://v1/"
     WIX_BASE_URL = "https://static.wixstatic.com/media/"
 
@@ -110,6 +124,10 @@ def extract_artists(csv_file):
             "primary_website": artist[PRIMARY_WEBSITE_IDX],
             "secondary_website": artist[SECONDARY_WEBSITE_IDX],
             "email": artist[EMAIL_IDX],
+            "phone": artist[PHONENUM_IDX],
+            "artist_statement": artist[ARTIST_STATEMENT_IDX],
+            "facebook": artist[FACEBOOK_IDX],
+            "instagram": artist[INSTAGRAM_IDX],
             "pieces": sample_pieces,
         }
         artists.append(artist_object)
@@ -121,7 +139,7 @@ if __name__ == "__main__":
     user_confirmation = input("continue? [y/N] ")
     if user_confirmation.lower() == 'y': 
         artists = extract_artists(open("./Artists.csv")) 
-        for a in artists:
-            upload_artist_images(a)
+        #for a in artists:
+            #upload_artist_images(a)
     else:
         print("Cancelled")

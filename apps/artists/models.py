@@ -4,8 +4,8 @@ from django.utils.text import slugify
 
 
 class Medium(models.Model):
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, blank=True)
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, blank=True, max_length=255)
 
     class Meta:
         ordering = ['name']
@@ -22,14 +22,19 @@ class Medium(models.Model):
 
 class Artist(models.Model):
     id = models.CharField(max_length=36, primary_key=True)
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(unique=True, blank=True, max_length=220)
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True, blank=True, max_length=255)
     bio = models.TextField(blank=True)
     mediums = models.ManyToManyField(Medium, blank=True)
-    profile_image = models.ImageField(upload_to='artists/profiles/', blank=True)
+    profile_image = models.ImageField(upload_to='artists/profiles/', blank=True, max_length=255)
     primary_website = models.URLField(blank=True)
     secondary_website = models.URLField(blank=True) 
     email = models.EmailField(blank=True)
+    phone = models.CharField(max_length=20, blank=True)
+    artist_statement = models.TextField(blank=True)
+    facebook = models.URLField(blank=True) 
+    instagram = models.URLField(blank=True)
+
     primary_venue = models.ForeignKey(
         'venues.Venue',
         null=True,
@@ -57,8 +62,8 @@ class Artist(models.Model):
         super().save(*args, **kwargs)
 
 class Piece(models.Model):
-    slug = models.CharField(max_length=200)
-    url = models.CharField(max_length=200)
+    slug = models.CharField(max_length=255)
+    url = models.CharField(max_length=255)
     artist = models.ForeignKey(
         Artist, 
         on_delete=models.CASCADE
