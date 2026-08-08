@@ -1,6 +1,6 @@
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand 
-from apps.artists.management.commands._upload_digital_ocean import extract_artists 
+from apps.artists.management.commands._scrape_artists_csv import extract_artists 
 from apps.artists.models import Artist, Piece
 import requests
 import os
@@ -21,19 +21,16 @@ class Command(BaseCommand):
             artists = extract_artists(csv_file=csv_file)
 
         num_artists_processed = 1
-        self.stdout.write(self.style.NOTICE("Uploading Images to Digital Ocean (this may take a while)...")) # type: ignore[attr-defined]
+        self.stdout.write(self.style.NOTICE("Uploading Images to Digital Ocean (this may take a while)...")) 
 
         for artist in artists:
             self.stdout.write(f"\rProcessing artist: ({num_artists_processed}/{len(artists)})... ", ending="")
-
-            # upload_artist_images(artist) # object storage
 
             a = Artist(
                 id=artist['id'], 
                 name=artist['name'],
                 slug=artist['slug'],
                 bio=artist['bio'],
-                #profile_image=artist['profile_picture'],
                 primary_website=artist['primary_website'],
                 secondary_website=artist['secondary_website'],
                 email=artist['email'],
@@ -48,7 +45,7 @@ class Command(BaseCommand):
             response = requests.get(wix_profile_url ,stream=True)
 
             if response.status_code == 200:
-                a.profile_image.save(f"{a.slug}_profile{ext}", #type: ignore
+                a.profile_image.save(f"{a.slug}_profile{ext}", 
                                      ContentFile(response.content),
                                      save=False) 
 
@@ -62,11 +59,11 @@ class Command(BaseCommand):
                 _, ext = os.path.splitext(wix_piece_url)
                 response = requests.get(wix_piece_url, stream=True)
                 if response.status_code == 200:
-                    p.image.save(f"{p.slug}{ext}", #type: ignore
+                    p.image.save(f"{p.slug}{ext}", 
                                ContentFile(response.content),
                                save=False)
 
                 p.save()
             num_artists_processed += 1
 
-        self.stdout.write(self.style.SUCCESS("\nSync complete!")) # type: ignore[attr-defined]
+        self.stdout.write(self.style.SUCCESS("\nSync complete!")) 
