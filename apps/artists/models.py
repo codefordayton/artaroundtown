@@ -26,7 +26,7 @@ class Artist(models.Model):
     slug = models.SlugField(unique=True, blank=True, max_length=255)
     bio = models.TextField(blank=True)
     mediums = models.ManyToManyField(Medium, blank=True)
-    profile_image = models.ImageField(upload_to='artists/profiles/', blank=True, max_length=255)
+    profile_image = models.ImageField(upload_to='artists/profiles/', blank=True)
     primary_website = models.URLField(blank=True)
     secondary_website = models.URLField(blank=True) 
     email = models.EmailField(blank=True)
@@ -63,7 +63,7 @@ class Artist(models.Model):
 
 class Piece(models.Model):
     slug = models.CharField(max_length=255)
-    url = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='artists/pieces/', blank=True)
     artist = models.ForeignKey(
         Artist, 
         on_delete=models.CASCADE

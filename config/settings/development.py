@@ -3,6 +3,7 @@ from .base import *
 from dotenv import load_dotenv
 load_dotenv()
 
+print("DEVELOPMENT!!!")
 DEBUG = True
 
 DATABASES = {

@@ -2,7 +2,9 @@ import dj_database_url
 from decouple import config
 from .base import *
 
-DEBUG = False
+print("NOT DEVELOPMENT!!!")
+
+DEBUG = True
 
 DATABASES = {
     'default': dj_database_url.config(conn_max_age=600)
