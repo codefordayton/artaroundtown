@@ -40,6 +40,8 @@ def extract_artists(csv_file):
         sample_pieces = ast.literal_eval(artist[SAMPLE_PIECES_IDX])
         for idx, piece in enumerate(sample_pieces):
             piece_slug = piece['slug']
+            if 'mv2' in piece_slug  and '~mv2' not in piece_slug:
+                piece_slug = piece_slug.replace('mv2', '~mv2')
             piece_url = "https://static.wixstatic.com/media/" + piece_slug
             sample_pieces[idx] = {"slug": piece_slug, "url": piece_url}
 

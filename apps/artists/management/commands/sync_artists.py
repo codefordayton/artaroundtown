@@ -59,7 +59,7 @@ class Command(BaseCommand):
                 _, ext = os.path.splitext(wix_piece_url)
                 response = requests.get(wix_piece_url, stream=True)
                 if response.status_code == 200:
-                    p.image.save(f"{p.slug}{ext}", 
+                    p.image.save(f"{p.slug}", 
                                ContentFile(response.content),
                                save=False)
 
