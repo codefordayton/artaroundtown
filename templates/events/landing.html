@@ -13,7 +13,6 @@
 
   /* ── Hero: bright, warm, handmade ──────────────────────────────── */
   .landing-hero {
-    margin-top: -2rem;                 /* cancel container's top padding */
     padding: 3rem 1.5rem 5.5rem;
     background:
       radial-gradient(ellipse 70% 60% at 50% 30%, rgba(255,247,240,0.6), transparent 70%),
@@ -109,6 +108,25 @@
     .artwork-tile:nth-child(n+4) { display: none; }
   }
 
+  /* ── Art slider (full-width, flush under the navbar) ─────────────── */
+  .art-slider-wrap {
+    margin-top: -2rem;   /* cancel <main class="py-4">'s top padding */
+    margin-bottom: 0;
+  }
+  .art-slider-wrap .carousel-item img {
+    width: 100%;
+    height: 60vh;
+    max-height: 560px;
+    object-fit: cover;
+  }
+  .art-slider-wrap .carousel-caption p {
+    margin: 0;
+    font-weight: 700;
+  }
+  @media (max-width: 767px) {
+    .art-slider-wrap .carousel-item img { height: 42vh; min-height: 240px; }
+  }
+
   /* ── Upcoming + explore ────────────────────────────────────────── */
   .home-section { padding: 3.5rem 0 1rem; }
   .section-kicker {
@@ -168,6 +186,45 @@
 {% endblock %}
 
 {% block content %}
+
+{# ── Art slider ───────────────────────────────────────────────── #}
+{% if slider_images %}
+<div id="artSlider" class="carousel slide carousel-fade art-slider-wrap bleed"
+     data-bs-ride="carousel" data-bs-interval="{{ slider_interval_ms }}">
+  {% if slider_images|length > 1 %}
+  <div class="carousel-indicators">
+    {% for slide in slider_images %}
+      <button type="button" data-bs-target="#artSlider" data-bs-slide-to="{{ forloop.counter0 }}"
+              class="{% if forloop.first %}active{% endif %}"
+              aria-current="{% if forloop.first %}true{% endif %}"
+              aria-label="Slide {{ forloop.counter }}"></button>
+    {% endfor %}
+  </div>
+  {% endif %}
+  <div class="carousel-inner">
+    {% for slide in slider_images %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %}">
+        <img src="{{ slide.image.url }}" alt="{{ slide.caption|default:'Featured artwork' }}">
+        {% if slide.caption %}
+        <div class="carousel-caption d-none d-md-block">
+          <p>{{ slide.caption }}</p>
+        </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  {% if slider_images|length > 1 %}
+  <button class="carousel-control-prev" type="button" data-bs-target="#artSlider" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#artSlider" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+  {% endif %}
+</div>
+{% endif %}
 
 {# ── Hero ──────────────────────────────────────────────────────── #}
 <section class="landing-hero bleed">

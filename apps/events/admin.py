@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Event, EventStatus
+from .models import Event, EventStatus, SliderImage, SliderSettings
 
 
 @admin.register(Event)
@@ -32,3 +32,21 @@ class EventAdmin(admin.ModelAdmin):
     def reject_events(self, request, queryset):
         queryset.update(status=EventStatus.REJECTED)
     reject_events.short_description = 'Reject selected events'
+
+
+@admin.register(SliderImage)
+class SliderImageAdmin(admin.ModelAdmin):
+    list_display = ['__str__', 'order', 'is_active', 'created_at']
+    list_editable = ['order', 'is_active']
+    ordering = ['order']
+
+
+@admin.register(SliderSettings)
+class SliderSettingsAdmin(admin.ModelAdmin):
+    list_display = ['interval_seconds']
+
+    def has_add_permission(self, request):
+        return not SliderSettings.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False

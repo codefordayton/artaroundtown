@@ -102,3 +102,45 @@ class Event(models.Model):
         if self.venue:
             return self.venue.name
         return self.location_name
+
+
+class SliderImage(models.Model):
+    """A single slide in the homepage art slider."""
+    image = models.ImageField(upload_to='slider/')
+    caption = models.CharField(max_length=200, blank=True, help_text='Optional — e.g. artist name or piece title.')
+    order = models.PositiveIntegerField(default=0, help_text='Slides are shown lowest-first.')
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', 'created_at']
+
+    def __str__(self):
+        return self.caption or f'Slide {self.pk}'
+
+
+class SliderSettings(models.Model):
+    """Singleton row holding site-wide slider config (just the one row, pk=1)."""
+    interval_seconds = models.PositiveSmallIntegerField(
+        default=4,
+        help_text='How long each slide stays on screen before advancing.',
+    )
+
+    class Meta:
+        verbose_name = 'Slider settings'
+        verbose_name_plural = 'Slider settings'
+
+    def __str__(self):
+        return 'Slider settings'
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass
+
+    @classmethod
+    def load(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj

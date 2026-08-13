@@ -7,7 +7,7 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.generic import DetailView, TemplateView
 
 from .forms import EventSubmissionForm
-from .models import Event, EventStatus
+from .models import Event, EventStatus, SliderImage, SliderSettings
 
 
 class LandingView(TemplateView):
@@ -40,6 +40,9 @@ class LandingView(TemplateView):
             )
             artwork.extend(extra)
         ctx['artwork_events'] = artwork
+
+        ctx['slider_images'] = SliderImage.objects.filter(is_active=True)
+        ctx['slider_interval_ms'] = SliderSettings.load().interval_seconds * 1000
 
         return ctx
 
