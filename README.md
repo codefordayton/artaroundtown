@@ -20,7 +20,12 @@ cp .env.example .env
 ### Migrations
 ```
 python3 manage.py makemigrations
-python3 manage.py migrate
+
+python3 manage.py migrate 
+
+# to run as prod
+# python manage.py makemigrations --settings=config.settings.production
+# python manage.py migrate --settings=config.settings.production
 ```
 
 ### Fill artists table
@@ -46,4 +51,7 @@ python3 manage.py sync_artists --csvfile <path to csvfile>
 ### Run the server 
 ```
 python manage.py runserver
+
+# to run as prod 
+python manage.py runserver --settings=config.settings.production
 ```
