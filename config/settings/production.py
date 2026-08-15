@@ -2,19 +2,20 @@ import dj_database_url
 from decouple import config
 from .base import *
 
-print("NOT DEVELOPMENT!!!")
-
 DEBUG = True
 
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600)
+    'default': dj_database_url.config(
+        default='sqlite:///db.sqlite3',
+        conn_max_age=600,
+    )
 }
 
 # ── Media storage ──────────────────────────────────────────────────
 # S3-compatible object storage (DigitalOcean Spaces, Backblaze B2, AWS S3).
 # DO Spaces endpoint looks like https://nyc3.digitaloceanspaces.com and the
 # bucket is the Space name. Set S3_CUSTOM_DOMAIN to a CDN domain if you use
-# the Spaces CDN (e.g. mybucket.nyc3.cdn.digitaloceanspaces.com).
+# the Spaces CDN (e.g. mybucket.nyc3.digitaloceanspaces.com).
 USE_S3_STORAGE = config('USE_S3_STORAGE', default=False, cast=bool)
 
 if USE_S3_STORAGE:
