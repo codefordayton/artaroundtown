@@ -4,8 +4,8 @@ from django.utils.text import slugify
 
 
 class Medium(models.Model):
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, blank=True)
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, blank=True, max_length=255)
 
     class Meta:
         ordering = ['name']
@@ -21,13 +21,20 @@ class Medium(models.Model):
 
 
 class Artist(models.Model):
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(unique=True, blank=True, max_length=220)
+    id = models.CharField(max_length=36, primary_key=True)
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True, blank=True, max_length=255)
     bio = models.TextField(blank=True)
     mediums = models.ManyToManyField(Medium, blank=True)
     profile_image = models.ImageField(upload_to='artists/profiles/', blank=True)
-    website = models.URLField(blank=True)
+    primary_website = models.URLField(blank=True)
+    secondary_website = models.URLField(blank=True) 
     email = models.EmailField(blank=True)
+    phone = models.CharField(max_length=20, blank=True)
+    artist_statement = models.TextField(blank=True)
+    facebook = models.URLField(blank=True) 
+    instagram = models.URLField(blank=True)
+
     primary_venue = models.ForeignKey(
         'venues.Venue',
         null=True,
@@ -52,12 +59,12 @@ class Artist(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            base = slugify(self.name)
-            slug = base
-            n = 1
-            while Artist.objects.filter(slug=slug).exclude(pk=self.pk).exists():
-                slug = f'{base}-{n}'
-                n += 1
-            self.slug = slug
         super().save(*args, **kwargs)
+
+class Piece(models.Model):
+    slug = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='artists/pieces/', blank=True)
+    artist = models.ForeignKey(
+        Artist, 
+        on_delete=models.CASCADE
+    )

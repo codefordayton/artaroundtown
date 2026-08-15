@@ -13,6 +13,7 @@ urlpatterns = [
     path('health/', health_check),
     path('admin/', admin.site.urls),
     path('api/', include('apps.events.urls_api')),
+    path('', include('apps.artists.urls')),
     path('', include('apps.events.urls')),
     path('', include('apps.venues.urls')),
     path('', include('apps.users.urls')),

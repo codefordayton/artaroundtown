@@ -1,6 +1,6 @@
 from django.views.generic import ListView, DetailView
 
-from .models import Artist, Medium
+from .models import Artist, Medium, Piece
 
 
 class ArtistListView(ListView):
@@ -27,3 +27,7 @@ class ArtistDetailView(DetailView):
     template_name = 'artists/artist_detail.html'
     context_object_name = 'artist'
     queryset = Artist.objects.filter(is_active=True).prefetch_related('mediums')
+
+    def get_queryset(self):
+        qs = Artist.objects.prefetch_related('piece_set')
+        return qs
