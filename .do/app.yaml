@@ -1,0 +1,83 @@
+# DigitalOcean App Platform spec.
+# Create:  doctl apps create --spec .do/app.yaml
+# Update:  doctl apps update <app-id> --spec .do/app.yaml
+# Secrets marked "set me" are entered once in the DO dashboard (or via
+# doctl); App Platform encrypts them and they never need to live in git.
+name: artaroundtown
+region: nyc
+
+databases:
+  - name: db
+    engine: PG
+    version: "16"
+    production: false   # $7/mo dev database; flip to true for the $15 managed tier with backups
+
+services:
+  - name: web
+    dockerfile_path: Dockerfile
+    source_dir: /
+    github:
+      repo: codefordayton/artaroundtown
+      branch: main
+      deploy_on_push: true
+    http_port: 8000
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb   # ~$5/mo
+    health_check:
+      http_path: /health/
+      initial_delay_seconds: 20
+    envs:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.production
+      - key: DATABASE_URL
+        value: ${db.DATABASE_URL}
+      - key: SECRET_KEY
+        type: SECRET
+        value: "set me"
+      - key: ALLOWED_HOSTS
+        value: artaroundtowndayton.org,www.artaroundtowndayton.org,${APP_DOMAIN}
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://artaroundtowndayton.org,https://www.artaroundtowndayton.org,https://${APP_DOMAIN}
+      - key: USE_S3_STORAGE
+        value: "True"
+      - key: S3_ACCESS_KEY_ID
+        type: SECRET
+        value: "set me"
+      - key: S3_SECRET_ACCESS_KEY
+        type: SECRET
+        value: "set me"
+      - key: S3_BUCKET_NAME
+        value: "set me"
+      - key: S3_ENDPOINT_URL
+        value: https://nyc3.digitaloceanspaces.com
+      - key: S3_REGION
+        value: nyc3
+      - key: S3_CUSTOM_DOMAIN
+        value: ""
+      - key: BREVO_API_KEY
+        type: SECRET
+        value: "set me"
+      - key: DEFAULT_FROM_EMAIL
+        value: noreply@artaroundtowndayton.org
+      - key: ADMIN_EMAIL
+        value: ""
+
+jobs:
+  - name: migrate
+    kind: PRE_DEPLOY
+    dockerfile_path: Dockerfile
+    source_dir: /
+    github:
+      repo: codefordayton/artaroundtown
+      branch: main
+      deploy_on_push: true
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    run_command: python manage.py migrate --noinput
+    envs:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.production
+      - key: DATABASE_URL
+        value: ${db.DATABASE_URL}
+      - key: SECRET_KEY
+        type: SECRET
+        value: "set me"

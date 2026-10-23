@@ -6,9 +6,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = config('SECRET_KEY', default='dev-secret-key-change-in-production')
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
-# Railway's internal health checker always uses this host header
-if 'healthcheck.railway.app' not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS.append('healthcheck.railway.app')
+
+# Origins allowed to POST (admin login, event submission forms). Must include
+# the scheme, e.g. https://artaroundtowndayton.org
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='', cast=Csv())
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -27,6 +28,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'config.middleware.HealthCheckMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

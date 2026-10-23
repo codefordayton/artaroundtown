@@ -47,10 +47,13 @@ else:
     MEDIA_ROOT = BASE_DIR / 'media'
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-# Railway terminates TLS at the edge; the app only ever sees HTTP internally.
-# Enabling SSL redirect would cause Railway's health checker (plain HTTP) to
-# get a 301 and never see a 200.
+# DigitalOcean App Platform terminates TLS at its edge and already redirects
+# HTTP to HTTPS there; the container only ever sees plain HTTP. Leave the
+# Django-level redirect off so the platform health check (plain HTTP, no
+# forwarded-proto header) gets a 200 instead of a 301.
 SECURE_SSL_REDIRECT = False
+SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
