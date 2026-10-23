@@ -9,6 +9,7 @@
         <p class="text-muted">
             {% if venue.address %}{{ venue.address }}, {% endif %}
             {{ venue.city }}, {{ venue.state }} {{ venue.zip_code }}
+            {% if venue.phone %}<br><a href="tel:{{ venue.phone }}" class="text-muted">{{ venue.phone }}</a>{% endif %}
         </p>
         {% if venue.website %}
             <a href="{{ venue.website }}" class="btn btn-primary mb-3" target="_blank" rel="noopener">Visit Website</a>

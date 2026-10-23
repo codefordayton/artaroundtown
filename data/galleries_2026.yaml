@@ -1,0 +1,399 @@
+source: 2026 Art Galleries and Exhibitions.pdf
+as_of: 2026-10-01
+venues:
+- name: Art Has No Rules
+  website: https://www.arthasnorules.com/
+  address: 1001 E Second St, Building C-D
+  city: Dayton
+  state: OH
+  zip: '45402'
+  phone: ''
+  links: []
+  notes: []
+  shows: []
+- name: Black Palette Art Gallery
+  website: ''
+  address: 1139 W Third
+  city: Dayton
+  state: OH
+  zip: '45402'
+  phone: 937-723-9106
+  links: []
+  notes: []
+  shows: []
+- name: Blue House Arts
+  website: https://www.thebluehousearts.org/
+  address: 3325 Catalpa Drive
+  city: Dayton
+  state: OH
+  zip: '45405'
+  phone: (937) 305-1557
+  links: []
+  notes: []
+  shows: []
+- name: The Contemporary
+  website: https://codayton.org
+  address: 25 W. 4th Street
+  city: Dayton
+  state: OH
+  zip: '45402'
+  phone: 937-224-3822
+  links:
+  - label: Programs/Events/Workshops
+    url: https://codayton.org/events/
+  notes: []
+  shows:
+  - title: 'Stacy Kranitz: Ain’t No Grave Gonna Hold My Body Down'
+    start: 2026-09-25
+    end: 2027-01-23
+    url: https://codayton.org/season-schedule/kranitz-angghmbd/
+    description: ''
+  - title: 'Ella Kraimer: Appearances'
+    start: 2026-09-25
+    end: 2027-01-23
+    url: https://codayton.org/season-schedule/ella-kraimer-appearances/
+    description: ''
+  - title: 'Elham Bayati: Where Memory Blooms'
+    start: 2026-10-07
+    end: 2026-10-31
+    url: ''
+    description: ''
+- name: Dana L. Wiley Gallery
+  website: https://danalwileygallery.com/
+  address: 1001 E Second Street, B/C Entrance, 2405 Second Floor
+  city: Dayton
+  state: OH
+  zip: '45402'
+  phone: 937-475-3794
+  links: []
+  notes: []
+  shows: []
+- name: The Dayton Art Institute
+  website: https://www.daytonartinstitute.org/
+  address: 456 Belmonte Park N
+  city: Dayton
+  state: OH
+  zip: '45405'
+  phone: 937-223-4278
+  links:
+  - label: Calendar of Events
+    url: https://www.daytonartinstitute.org/do-see/calendar/upcoming
+  notes: []
+  shows:
+  - title: 'Getting Technical: Alternative Photographic Processes'
+    start: null
+    end: 2026-10-25
+    url: ''
+    description: 'Location: Gallery 119'
+  - title: The Max May Memorial Holocaust Exhibition
+    start: null
+    end: 2026-10-25
+    url: ''
+    description: 'Location: South Gallery'
+  - title: 'Exploring Japan: Early Japanese Photography'
+    start: null
+    end: 2026-11-29
+    url: ''
+    description: 'Location: Gallery 117'
+  - title: 'Captivating Clay: Contemporary Japanese Ceramics from the Horvitz Collection'
+    start: null
+    end: 2027-01-03
+    url: ''
+    description: 'Location: Gallery 106'
+  - title: Exploring Feminism
+    start: null
+    end: 2027-01-31
+    url: ''
+    description: 'Location: Gallery 118'
+  category: museums
+- name: Dayton Society of Artists
+  website: https://daytondsa.org
+  address: 48 High Street
+  city: Dayton
+  state: OH
+  zip: '45403'
+  phone: 937-228-4532
+  links:
+  - label: Programs/Events/Workshops
+    url: https://daytondsa.org/events&workshops
+  notes: []
+  shows:
+  - title: 'Luminous Flow: Time Made Visible'
+    start: 2026-10-02
+    end: 2026-10-30
+    url: ''
+    description: '2026 FotoFocus Biennial: The Long View'
+  - title: Small but Mighty 2026
+    start: 2026-11-13
+    end: 2027-01-01
+    url: ''
+    description: ''
+- name: Edward A Dixon Gallery
+  website: https://shop.eadgallery.com/
+  address: 222 N St Clair S
+  city: Dayton
+  state: OH
+  zip: '45402'
+  phone: 937-985-2115
+  links: []
+  notes: []
+  shows:
+  - title: 'Picturing Tomorrow: Speculative Futures in Lens Based Art'
+    start: 2026-10-01
+    end: 2026-10-31
+    url: ''
+    description: ''
+- name: Front Street
+  website: https://frontstreet.art/
+  address: 1001 E Second Street
+  city: Dayton
+  state: OH
+  zip: '45402'
+  phone: 937-331-9061
+  links:
+  - label: Directory of Artists, Artisans, Craftspeople, and Shops
+    url: https://frontstreet.art/tenant-directory/
+  - label: Art Hops and Events
+    url: https://frontstreet.art/events/
+  notes:
+  - 'Midwest''s largest art center: 200+ artists and artisans, 16 galleries, 15 shops.'
+  shows: []
+- name: The Hotel Gallery
+  website: https://hotelgallerytippcityohio.com/
+  address: 109 E Main Street
+  city: Tipp City
+  state: OH
+  zip: '45371'
+  phone: 937-667-3696
+  links:
+  - label: Live Music and Events
+    url: https://hotelgallerytippcityohio.com/live-music-%26-events
+  notes: []
+  shows: []
+- name: The International Peace Museum
+  website: https://www.peace.museum/
+  address: 10 N Ludlow
+  city: Dayton
+  state: OH
+  zip: '45402'
+  phone: 937-227-3223
+  links: []
+  notes: []
+  shows:
+  - title: To Be At Peace
+    start: null
+    end: 2027-01-23
+    url: ''
+    description: ''
+  category: museums
+- name: Julie Riley Art
+  website: https://www.julierileyart.com/
+  address: 1001 E Second St, Building 100, Door A, First Floor
+  city: Dayton
+  state: OH
+  zip: '45402'
+  phone: 937-671-6212
+  links: []
+  notes: []
+  shows: []
+- name: Miamisburg Art Gallery
+  website: https://miamisburgartgallery.com/
+  address: 16 N Main Street
+  city: Miamisburg
+  state: OH
+  zip: '45342'
+  phone: 937-886-3891
+  links:
+  - label: Events
+    url: https://miamisburgartgallery.com/?page_id=50
+  notes: []
+  shows:
+  - title: Harvest Days Exhibit
+    start: 2026-10-02
+    end: 2026-10-31
+    url: ''
+    description: 'Feat Cathy Shane and Darci Salinas
+
+      Fridays and Saturdays 12 - 8PM'
+  - title: Food, Fun and Family
+    start: 2026-11-07
+    end: 2026-11-28
+    url: ''
+    description: ''
+  - title: Naughty or Nice
+    start: 2026-12-05
+    end: 2026-12-23
+    url: ''
+    description: Holiday/Winter Exhibit
+- name: Olde Masters Galleria
+  website: https://www.oldemastersgalleria.com/index.php
+  address: 55 Rhoads Center Drive
+  city: Centerville
+  state: OH
+  zip: '45458'
+  phone: 937-602-3173
+  links: []
+  notes: []
+  shows: []
+- name: The Pendleton Art Center
+  website: https://pendletonartcenter.com/
+  address: 1105 Central Ave
+  city: Middletown
+  state: OH
+  zip: '45044'
+  phone: 513-852-2767
+  links:
+  - label: Events
+    url: https://pendletonartcenter.com/pac-events/
+  notes: []
+  shows: []
+- name: Robert and Elaine Stein Galleries
+  website: https://liberal-arts.wright.edu/art-galleries
+  address: Wright State University, College of Liberal Arts, 3640 Colonel Glenn Highway
+  city: Fairborn
+  state: OH
+  zip: '45324'
+  phone: 937-775-2973
+  links: []
+  notes: []
+  shows:
+  - title: 'Elizabeth Mead: Incident(als): objects+things, sculpture+photographs'
+    start: null
+    end: 2026-10-31
+    url: ''
+    description: ''
+  - title: 'Holly Roberts: Confluence'
+    start: null
+    end: 2026-10-31
+    url: ''
+    description: ''
+  - title: Focus Forward
+    start: null
+    end: 2026-10-31
+    url: ''
+    description: ''
+- name: Rosewood Art Gallery
+  website: https://www.playkettering.org/rosewood-arts-center-home/
+  address: 2655 Olson Drive
+  city: Kettering
+  state: OH
+  zip: '45420'
+  phone: 937-296-0294
+  links: []
+  notes: []
+  shows:
+  - title: Trent Davis Bailey (Evergreen, CO), "The North Fork"
+    start: null
+    end: 2026-11-07
+    url: ''
+    description: Fotofocus Biennial 2026, "The Long View"
+  - title: Amanda Bradley (Miami, FL) “Notations From Home”
+    start: null
+    end: 2026-11-07
+    url: ''
+    description: Fotofocus Biennial 2026, "The Long View"
+  - title: 'Inspire: Fourth Annual Rosewood Faculty Show'
+    start: null
+    end: 2026-10-31
+    url: ''
+    description: ''
+  - title: Sally Blair and James Terrell
+    start: 2026-11-23
+    end: 2027-01-02
+    url: ''
+    description: Sally Blair (Chicago, IL) and James Terrell (Washington, D.C.)
+- name: Galleries at Sinclair Community College
+  website: https://www.sinclair.edu/student-life/arts-culture/art-galleries/
+  address: 444 W Fourth Street, Building 13
+  city: Dayton
+  state: OH
+  zip: '45402'
+  phone: ''
+  links: []
+  notes:
+  - 'Also at Sinclair: the Hypotenuse Gallery (student and professional work in ceramics, sculpture and
+    other 3D media), the Skyway Gallery (scholarship student work, on the skywalk between Buildings 10
+    and 2), the Student Galleries, and the Zone VI Photography Gallery (student photography, including
+    the annual Fine Art Student Juried Exhibition).'
+  shows:
+  - title: 'Katria Foster: A domestic Affair'
+    start: null
+    end: 2026-10-26
+    url: ''
+    description: 'Location: Burnell R Roberts Triangle Gallery'
+  - title: Emily Wiethorn, The Death of You and Me
+    start: null
+    end: 2026-10-26
+    url: ''
+    description: 'Location: Works on Paper Gallery'
+- name: Springfield Museum of Art
+  website: https://www.springfieldart.net/
+  address: 107 Cliff Park Drive
+  city: Springfield
+  state: OH
+  zip: '45504'
+  phone: 937-325-4673
+  links: []
+  notes:
+  - 'Also on view: Resilient Spirits: 75 Years of Haitian Metalwork; Land of Opportunity: Landscape, Labor,
+    and the American Dream; Imprinting: Charley Harper, Edie McKee Harper, and Brett Harper; Line | Drawing
+    Meaning from the Mark; Celebrating Women: Female Artists from the Permanent Collection'
+  shows:
+  - title: 'Permeable: The Breath That Moves Between'
+    start: null
+    end: 2027-05-09
+    url: ''
+    description: ''
+  category: museums
+- name: Sugarcreek Photography Gallery
+  website: https://sugarcreekphotographygallery.com/
+  address: 15B W Franklin St
+  city: Bellbrook
+  state: OH
+  zip: '45305'
+  phone: 937-317-0170
+  links: []
+  notes: []
+  shows: []
+- name: University of Dayton INDEX Gallery
+  website: ''
+  address: The Hub, 31 S Main St
+  city: Dayton
+  state: OH
+  zip: '45402'
+  phone: 937-229-2611
+  links: []
+  notes: []
+  shows: []
+- name: University of Dayton Radial Gallery
+  website: ''
+  address: Fitz Hall, Second Floor, 300 College Park Drive
+  city: Dayton
+  state: OH
+  zip: '45469'
+  phone: 937-229-2611
+  links: []
+  notes: []
+  shows: []
+- name: University of Dayton Roger Glass Center for the Arts
+  website: ''
+  address: 29 E. Creative Way
+  city: Dayton
+  state: OH
+  zip: '45469'
+  phone: 937-229-2611
+  links: []
+  notes: []
+  shows: []
+- name: Zig Zag Gallery
+  website: https://www.zigzaggallery.com/
+  address: '101 E Alex Bell Rd #154'
+  city: Centerville
+  state: OH
+  zip: '45459'
+  phone: 937-434-3565
+  links:
+  - label: Events
+    url: https://www.zigzaggallery.com/events
+  notes: []
+  shows: []

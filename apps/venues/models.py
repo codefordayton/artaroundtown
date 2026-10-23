@@ -11,6 +11,7 @@ class Venue(models.Model):
     zip_code = models.CharField(max_length=10, blank=True)
     logo = models.ImageField(upload_to='venues/logos/', blank=True)
     website = models.URLField(blank=True)
+    phone = models.CharField(max_length=20, blank=True)
     description = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
