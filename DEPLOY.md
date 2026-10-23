@@ -1,8 +1,10 @@
 # Deploying to DigitalOcean App Platform
 
-The app runs as one Docker container (gunicorn) plus a managed Postgres
-database on DigitalOcean App Platform. Media lives in DigitalOcean Spaces,
-email goes out through Brevo. The App Platform spec is in `.do/app.yaml`.
+The app runs as one Docker container (gunicorn) on DigitalOcean App
+Platform. Postgres is on Neon's free tier (DigitalOcean's $7 dev database
+can't be used: its `db` user has no CREATE rights and DO exposes no admin
+login to grant them). Media lives in DigitalOcean Spaces, email goes out
+through Brevo. The App Platform spec is in `.do/app.yaml`.
 
 ## One-time setup
 
@@ -30,7 +32,15 @@ App Platform needs permission to read `codefordayton/artaroundtown`.
 Dashboard → Apps → Create App → GitHub → install/authorize the
 DigitalOcean GitHub app for that org. (Only needed once per account.)
 
-### 3. Create the app from the spec
+### 3. Create the Neon database
+
+1. Sign up at neon.tech, create a project. Pick region **AWS us-east-2
+   (Ohio)**: closest to DO's nyc region and to Dayton.
+2. On the project dashboard click **Connect**, choose the *direct*
+   connection (not pooled), and copy the `postgresql://...?sslmode=require`
+   string. That is `DATABASE_URL`.
+
+### 4. Create the app from the spec
 
 ```sh
 doctl apps spec validate .do/app.yaml
@@ -38,13 +48,14 @@ doctl apps create --spec .do/app.yaml
 doctl apps list                          # grab the app ID
 ```
 
-The spec creates the web service, a pre-deploy `migrate` job, and a dev
-Postgres database. Every `"set me"` value is a placeholder: fill them in
+The spec creates the web service and a pre-deploy `migrate` job. Every
+`"set me"` value is a placeholder: fill them in
 under Apps → artaroundtown → Settings → (component) → Environment
 Variables, or edit `.do/app.yaml` locally (never commit real secrets) and
 run `doctl apps update <app-id> --spec .do/app.yaml`.
 
-Required secrets: `SECRET_KEY`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`,
+Required secrets: `DATABASE_URL` (on **both** the web service and the
+migrate job), `SECRET_KEY` (both), `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`,
 `S3_BUCKET_NAME`, `BREVO_API_KEY`. The spec references `${APP_DOMAIN}` so
 the auto-generated `*.ondigitalocean.app` hostname is allowed from the
 first deploy.
@@ -52,7 +63,7 @@ first deploy.
 Spaces notes: the Space must already exist. If you enable the Spaces CDN,
 set `S3_CUSTOM_DOMAIN` to `<space>.nyc3.cdn.digitaloceanspaces.com`.
 
-### 4. Move the data
+### 5. Move the data
 
 If the Railway Postgres holds data worth keeping (anything beyond what
 `import_calendar` and `import_venues` can regenerate):
@@ -61,9 +72,9 @@ If the Railway Postgres holds data worth keeping (anything beyond what
 # Railway: service → Connect → copy the public DATABASE_URL (TCP proxy)
 pg_dump --no-owner --no-acl -Fc "$RAILWAY_DATABASE_URL" -f artaroundtown.dump
 
-# DigitalOcean: Apps → artaroundtown → db → Connection Details (public)
+# Neon: the same DATABASE_URL you put in App Platform
 pg_restore --no-owner --no-acl --clean --if-exists \
-  -d "$DO_DATABASE_URL" artaroundtown.dump
+  -d "$NEON_DATABASE_URL" artaroundtown.dump
 ```
 
 `pg_restore` may print a handful of "does not exist" notices from `--clean`
@@ -74,7 +85,7 @@ and let `migrate` no-op. Either order works.
 If there is nothing to keep, skip this and re-run the importers after
 deploy (step 6).
 
-### 5. Point the domain
+### 6. Point the domain
 
 Apps → artaroundtown → Settings → Domains → Add Domain →
 `artaroundtowndayton.org` (and `www`). DigitalOcean shows the CNAME /
@@ -84,7 +95,7 @@ resolves. Propagation is usually minutes, up to a few hours.
 `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` in the spec already include the
 real domain.
 
-### 6. Post-deploy
+### 7. Post-deploy
 
 ```sh
 doctl apps list                               # confirm ACTIVE
@@ -114,13 +125,15 @@ python manage.py import_calendar ...
 | Component | Slug / tier | Approx. monthly |
 |---|---|---|
 | Web container | `apps-s-1vcpu-0.5gb` | $5 |
-| Postgres (dev) | `production: false` | $7 |
+| Postgres | Neon free tier | $0 |
 | Spaces | existing | $5 (250 GB incl.) |
 
-The dev database is a single node with no automated backups. Fine for a
-calendar site you can re-import, but if the data becomes the source of
-truth, flip `production: true` in the spec ($15/mo, daily backups,
-point-in-time recovery) or schedule a weekly `pg_dump` somewhere.
+Neon's free tier gives 0.5 GB of storage and suspends compute after a few
+minutes idle; the first request afterward takes about half a second while
+it wakes. Point-in-time restore on the free tier covers only a short
+window, so if the data becomes the source of truth, schedule a weekly
+`pg_dump` somewhere or move to Neon's paid tier or DO managed Postgres
+($15/mo).
 
 ## Local Docker check
 

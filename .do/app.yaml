@@ -6,12 +6,6 @@
 name: artaroundtown
 region: nyc
 
-databases:
-  - name: db
-    engine: PG
-    version: "16"
-    production: false   # $7/mo dev database; flip to true for the $15 managed tier with backups
-
 services:
   - name: web
     dockerfile_path: Dockerfile
@@ -29,8 +23,9 @@ services:
     envs:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings.production
-      - key: DATABASE_URL
-        value: ${db.DATABASE_URL}
+      - key: DATABASE_URL          # Neon connection string, incl. ?sslmode=require
+        type: SECRET
+        value: "set me"
       - key: SECRET_KEY
         type: SECRET
         value: "set me"
@@ -76,8 +71,9 @@ jobs:
     envs:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings.production
-      - key: DATABASE_URL
-        value: ${db.DATABASE_URL}
+      - key: DATABASE_URL          # Neon connection string, incl. ?sslmode=require
+        type: SECRET
+        value: "set me"
       - key: SECRET_KEY
         type: SECRET
         value: "set me"

@@ -4,8 +4,11 @@ from .base import *
 
 DEBUG = False
 
+# Neon (serverless Postgres) suspends idle compute and drops connections;
+# conn_health_checks pings a pooled connection before reuse so the first
+# request after an idle spell reconnects instead of 500ing.
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600)
+    'default': dj_database_url.config(conn_max_age=600, conn_health_checks=True)
 }
 
 # ── Media storage ──────────────────────────────────────────────────
