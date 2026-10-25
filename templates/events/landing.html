@@ -154,6 +154,9 @@
   }
   .event-date .m { display: block; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--color-primary); letter-spacing: 0.06em; }
   .event-date .d { display: block; font-size: 1.5rem; font-weight: 900; color: var(--color-dark); margin-top: 2px; }
+  .event-date.thru .m { color: var(--color-secondary); }
+  .event-date.thru .t { display: block; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 2px; }
+  .event-list + .section-head { margin-top: 2rem; }
   .event-body { min-width: 0; }
   .event-body h3 { font-size: 1.08rem; margin: 0 0 2px; color: var(--color-dark); }
   .event-row:hover .event-body h3 { color: var(--color-primary); }
@@ -263,12 +266,42 @@
 {# ── Upcoming events + explore ─────────────────────────────────── #}
 <div class="row home-section g-5">
   <div class="col-lg-7">
+    {% if current_events %}
     <div class="section-head">
       <div>
         <div class="section-kicker">What's on</div>
-        <h2>Upcoming Events</h2>
+        <h2>Now Showing</h2>
       </div>
       <a href="{% url 'calendar' %}">Full calendar &rarr;</a>
+    </div>
+    <div class="event-list">
+    {% for event in current_events %}
+      <a href="{% url 'event-detail' event.slug %}" class="event-row">
+        <div class="event-date thru">
+          {% if event.end_date %}
+            <span class="t">Thru</span>
+            <span class="m">{{ event.end_date|date:"M" }}</span>
+            <span class="d">{{ event.end_date|date:"j" }}</span>
+          {% else %}
+            <span class="m">{{ event.start_date|date:"M" }}</span>
+            <span class="d">{{ event.start_date|date:"j" }}</span>
+          {% endif %}
+        </div>
+        <div class="event-body">
+          <h3>{{ event.title }}</h3>
+          <p>{{ event.display_location }}</p>
+        </div>
+      </a>
+    {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="section-head">
+      <div>
+        {% if not current_events %}<div class="section-kicker">What's on</div>{% endif %}
+        <h2>Upcoming Events</h2>
+      </div>
+      {% if not current_events %}<a href="{% url 'calendar' %}">Full calendar &rarr;</a>{% endif %}
     </div>
 
     {% for event in featured_events %}

@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.mail import mail_admins
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -17,19 +18,25 @@ class LandingView(TemplateView):
         ctx = super().get_context_data(**kwargs)
         today = timezone.localdate()
 
-        upcoming = (
-            Event.objects.filter(status=EventStatus.APPROVED, start_date__gte=today)
-            .select_related('venue')
-            .order_by('start_date')
-        )
+        approved = Event.objects.filter(status=EventStatus.APPROVED).select_related('venue')
 
-        # Featured list for the "Upcoming" column
+        # Now showing: opened already and not yet closed (exhibitions mostly).
+        # A single-day event with no end_date counts only on its day.
+        ctx['current_events'] = approved.filter(
+            Q(start_date__lte=today),
+            Q(end_date__gte=today) | Q(end_date__isnull=True, start_date=today),
+        ).order_by('end_date', 'start_date')[:4]
+
+        upcoming = approved.filter(start_date__gt=today).order_by('start_date')
         ctx['featured_events'] = upcoming[:5]
 
-        # Real artwork for the thumbnail strip: upcoming events that have an
-        # image, falling back to any approved event with an image so the strip
-        # isn't empty early on.
-        artwork = list(upcoming.exclude(image='')[:6])
+        # Real artwork for the thumbnail strip: live (current or upcoming)
+        # events that have an image, falling back to any approved event with
+        # an image so the strip isn't empty early on.
+        live = approved.filter(
+            Q(start_date__gt=today) | Q(end_date__gte=today) | Q(start_date=today)
+        ).order_by('start_date')
+        artwork = list(live.exclude(image='')[:6])
         if len(artwork) < 6:
             seen = {e.pk for e in artwork}
             extra = (
