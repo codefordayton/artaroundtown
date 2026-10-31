@@ -1,10 +1,16 @@
 from django import forms
 
 from apps.venues.models import Venue
-from .models import Event
+from .models import Event, EventCategory
 
 
 class EventSubmissionForm(forms.ModelForm):
+    category = forms.ChoiceField(
+        choices=[('', '— Select a category —')] + list(EventCategory.choices),
+        required=True,
+        label='Category',
+        help_text='Pick the closest fit; visitors can filter the calendar by category.',
+    )
     submitter_name = forms.CharField(
         max_length=200,
         required=False,
@@ -32,7 +38,7 @@ class EventSubmissionForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = [
-            'title',
+            'title', 'category',
             'start_date', 'end_date',
             'opening_reception_date', 'opening_reception_time',
             'artist_talk_date', 'artist_talk_time',

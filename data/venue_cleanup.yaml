@@ -1,0 +1,86 @@
+# Venue cleanup plan — duplicates and corrections from Stefen's 2026-10-29 notes.
+#
+#   python manage.py merge_venues data/venue_cleanup.yaml --dry-run   # preview
+#   python manage.py merge_venues data/venue_cleanup.yaml             # apply
+#
+# `keep` survives (its slug, and therefore its URL, is unchanged); `absorb`
+# entries have their events moved onto it and are then deleted; `set` gives
+# the final details. Names match case-insensitively.
+
+merges:
+  - keep: "Edward A Dixon Gallery"
+    absorb: ["Edward A. Dixon Gallery"]
+    set:
+      name: "Edward A. Dixon Gallery"
+      address: "222 N. St. Clair St."
+      city: Dayton
+      state: OH
+      zip_code: "45402"
+
+  - keep: "Blue House Arts"
+    absorb: ["The Blue House Gallery and Studios"]
+    set:
+      name: "Blue House Arts"
+      address: "3325 Catalpa Dr."
+      city: Dayton
+      state: OH
+      zip_code: "45405"
+
+  - keep: "The Contemporary"
+    absorb: ["The Contemporary Dayton"]
+    set:
+      name: "The Contemporary Dayton"
+      address: "25 W. 4th St."
+      city: Dayton
+      state: OH
+      zip_code: "45402"
+
+  # "Elain" -> "Elaine"; galleries are in WSU's Creative Arts Center
+  - keep: "Robert and Elaine Stein Galleries"
+    absorb: ["Wright State University Robert & Elain Stein Galleries"]
+    set:
+      name: "Robert and Elaine Stein Galleries at Wright State University"
+      address: "Creative Arts Center, 3640 Colonel Glenn Hwy."
+      city: Dayton
+      state: OH
+      zip_code: "45435"
+
+  # The museum moved from Monument Ave. to Courthouse Plaza
+  - keep: "The International Peace Museum"
+    absorb: ["The Dayton International Peace Museum"]
+    set:
+      name: "The International Peace Museum"
+      address: "10 N. Ludlow St."
+      city: Dayton
+      state: OH
+      zip_code: "45402"
+
+  - keep: "Galleries at Sinclair Community College"
+    absorb: ["Sinclair Community College Galleries"]
+    set:
+      name: "Galleries at Sinclair Community College"
+      address: "444 W. Fourth St., Building 13"
+      city: Dayton
+      state: OH
+      zip_code: "45402"
+
+  - keep: "Rosewood Art Gallery"
+    absorb: ["Rosewood Arts Center"]
+    set:
+      name: "Rosewood Gallery at Rosewood Arts Center"
+      address: "2655 Olson Dr."
+      city: Kettering
+      state: OH
+      zip_code: "45420"
+
+  # Confirmed against daytoncollaboratory.org on 2026-10-31
+  - keep: "The Art Collaboratory"
+    absorb: ["The Collaboratory", "Dayton Collaboratory"]
+    set:
+      name: "The Collaboratory"
+      address: "Talbott Tower, 114 W. First St., Suite B"
+      city: Dayton
+      state: OH
+      zip_code: "45402"
+      website: "https://www.daytoncollaboratory.org"
+      phone: "937-732-5123"

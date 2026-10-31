@@ -53,6 +53,17 @@
           {% for e in form.title.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
         </div>
 
+        <div class="mb-3">
+          <label class="form-label fw-bold" for="id_category">Category <span class="text-danger">*</span></label>
+          <select name="category" id="id_category" class="form-select {% if form.category.errors %}is-invalid{% endif %}" required>
+            {% for value, label in form.fields.category.choices %}
+              <option value="{{ value }}" {% if form.category.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          <div class="form-text">{{ form.category.help_text }}</div>
+          {% for e in form.category.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+
         <div class="row g-3 mb-3">
           <div class="col-sm-6">
             <label class="form-label fw-bold">Opening / start date <span class="text-danger">*</span></label>

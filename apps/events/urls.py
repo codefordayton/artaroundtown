@@ -8,4 +8,5 @@ urlpatterns = [
     path('submit/', views.submit_event, name='submit-event'),
     path('submit/success/', views.submit_success, name='submit-success'),
     path('events/<slug:slug>/', views.EventDetailView.as_view(), name='event-detail'),
+    path('events/<slug:slug>/calendar.ics', views.event_ics, name='event-ics'),
 ]

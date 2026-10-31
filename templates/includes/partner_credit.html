@@ -1,0 +1,18 @@
+{% load static %}
+{# Partner credit line. Logos show when SITE_PARTNERS[n].logo is set in settings; otherwise the name. #}
+<div class="partner-credit {{ extra_class|default:'' }}">
+  <span class="partner-credit-label">Brought to you by</span>
+  <ul class="partner-list">
+    {% for p in SITE_PARTNERS %}
+      <li>
+        <a href="{{ p.url }}" target="_blank" rel="noopener" title="{{ p.name }}">
+          {% if p.logo %}
+            <img src="{% static p.logo %}" alt="{{ p.name }}" class="partner-logo">
+          {% else %}
+            {{ p.name }}
+          {% endif %}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>

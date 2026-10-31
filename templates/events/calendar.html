@@ -12,6 +12,14 @@
         </a>
     </div>
 </div>
+
+<div class="category-filter mb-3" role="group" aria-label="Filter events by category">
+    <button type="button" class="cat-pill active" data-category="" style="--cat-color: var(--color-dark)">All</button>
+    {% for c in categories %}
+    <button type="button" class="cat-pill" data-category="{{ c.value }}" style="--cat-color: {{ c.color }}">{{ c.label }}</button>
+    {% endfor %}
+</div>
+
 <div id="calendar"></div>
 {% endblock %}
 
@@ -19,20 +27,37 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    var params = new URLSearchParams(window.location.search);
+    var activeCategory = params.get('category') || '';
+    var pills = document.querySelectorAll('.cat-pill');
+
+    function syncPills() {
+        pills.forEach(function (p) {
+            p.classList.toggle('active', p.dataset.category === activeCategory);
+        });
+    }
+
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
+        initialView: params.get('view') || 'dayGridMonth',
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,listMonth'
         },
         eventColor: '#E8523A',
-        events: {
-            url: '/api/events/calendar/',
-            failure: function () {
-                alert('Could not load events. Please try refreshing the page.');
-            }
+        events: function (info, success, failure) {
+            var url = '/api/events/calendar/?start=' + encodeURIComponent(info.startStr) +
+                      '&end=' + encodeURIComponent(info.endStr);
+            if (activeCategory) url += '&category=' + encodeURIComponent(activeCategory);
+            fetch(url)
+                .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+                .then(success)
+                .catch(function () {
+                    failure();
+                    calendarEl.insertAdjacentHTML('beforebegin',
+                        '<div class="alert alert-warning">Could not load events. Please try refreshing the page.</div>');
+                });
         },
         eventClick: function (info) {
             info.jsEvent.preventDefault();
@@ -42,13 +67,35 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         },
         eventDidMount: function (info) {
-            var loc = info.event.extendedProps.location;
-            if (loc) {
-                info.el.title = loc;
+            var props = info.event.extendedProps;
+            var bits = [];
+            if (props.category_display) bits.push(props.category_display);
+            if (props.location) bits.push(props.location);
+            if (bits.length) info.el.title = bits.join(' · ');
+            // In list view, show category + venue under the title
+            var titleEl = info.el.querySelector('.fc-list-event-title');
+            if (titleEl && bits.length) {
+                var sub = document.createElement('div');
+                sub.className = 'fc-event-sub';
+                sub.textContent = bits.join(' · ');
+                titleEl.appendChild(sub);
             }
         }
     });
     calendar.render();
+    syncPills();
+
+    pills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+            activeCategory = pill.dataset.category;
+            syncPills();
+            calendar.refetchEvents();
+            var qs = new URLSearchParams(window.location.search);
+            if (activeCategory) qs.set('category', activeCategory); else qs.delete('category');
+            var q = qs.toString();
+            history.replaceState(null, '', window.location.pathname + (q ? '?' + q : ''));
+        });
+    });
 });
 </script>
 {% endblock %}

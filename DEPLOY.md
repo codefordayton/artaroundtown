@@ -111,6 +111,20 @@ python manage.py import_venues ...            # if not restoring the DB
 python manage.py import_calendar ...
 ```
 
+### 8. Venue cleanup (one-off, after the Oct 2026 feedback)
+
+Duplicate venues and address fixes live in `data/venue_cleanup.yaml`.
+From the app console, preview then apply:
+
+```sh
+python manage.py merge_venues data/venue_cleanup.yaml --dry-run
+python manage.py merge_venues data/venue_cleanup.yaml
+```
+
+Events on an absorbed duplicate move to the kept venue, whose slug (and
+URL) stays the same. Edit the YAML to change the final names/addresses
+before applying; the command is safe to re-run.
+
 ## Day-to-day
 
 - Push to `main` → App Platform builds the Dockerfile, runs the `migrate`

@@ -27,10 +27,11 @@
     width: 100%;
     max-width: 600px;
     height: auto;
-    margin: 0 auto 2rem;
+    margin: 0 auto 0.9rem;
     border-radius: 12px;
     box-shadow: 0 8px 26px rgba(0,0,0,0.16);
   }
+  .partner-credit-hero { margin: 0 auto 2rem; justify-content: center; }
 
   .hero-inner { max-width: 760px; margin: 0 auto; text-align: center; }
 
@@ -161,6 +162,10 @@
   .event-body h3 { font-size: 1.08rem; margin: 0 0 2px; color: var(--color-dark); }
   .event-row:hover .event-body h3 { color: var(--color-primary); }
   .event-body p { margin: 0; font-size: 0.87rem; font-weight: 600; color: var(--color-muted); }
+  .cat-dot {
+    display: inline-block; width: 0.55em; height: 0.55em; border-radius: 50%;
+    background: var(--cat-color, var(--color-muted)); margin-right: 0.35em; vertical-align: 0.05em;
+  }
 
   .explore-card {
     display: block; text-decoration: none;
@@ -232,8 +237,9 @@
 {# ── Hero ──────────────────────────────────────────────────────── #}
 <section class="landing-hero bleed">
   <div class="hero-inner">
-    <img class="hero-banner" src="{% static 'img/aat-dsa-banner.png' %}"
-         alt="Art Around Town — Dayton, Ohio. Brought to you by the Dayton Society of Artists.">
+    <img class="hero-banner" src="{% static 'img/aat-banner.png' %}"
+         alt="Art Around Town — Dayton, Ohio">
+    {% include 'includes/partner_credit.html' with extra_class='partner-credit-hero' %}
     <h1 class="hero-title">Be in the know about what's going on in <em>Arts&nbsp;&amp;&nbsp;Culture</em> in the Miami Valley</h1>
     <p class="hero-subtitle">
       Art Around Town is your one-stop resource for Concerts, Theater &amp; Dance
@@ -289,7 +295,7 @@
         </div>
         <div class="event-body">
           <h3>{{ event.title }}</h3>
-          <p>{{ event.display_location }}</p>
+          <p>{% if event.category %}<span class="cat-dot" style="--cat-color: {{ event.category_color }}"></span>{{ event.get_category_display }} · {% endif %}{{ event.display_location }}</p>
         </div>
       </a>
     {% endfor %}
@@ -312,7 +318,7 @@
         </div>
         <div class="event-body">
           <h3>{{ event.title }}</h3>
-          <p>{{ event.display_location }}</p>
+          <p>{% if event.category %}<span class="cat-dot" style="--cat-color: {{ event.category_color }}"></span>{{ event.get_category_display }} · {% endif %}{{ event.display_location }}</p>
         </div>
       </a>
     {% empty %}

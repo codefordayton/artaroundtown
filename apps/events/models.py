@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 from django.utils.text import slugify
 
 
@@ -15,7 +16,29 @@ class EventCategory(models.TextChoices):
     THEATER = 'theater', 'Theater'
     DANCE = 'dance', 'Dance'
     MUSEUMS = 'museums', 'Museums'
+    FILM = 'film', 'Film'
+    LITERARY = 'literary', 'Literary & Spoken Word'
+    CLASSES = 'classes', 'Classes & Workshops'
+    FESTIVALS = 'festivals', 'Festivals & Fairs'
     OTHER = 'other', 'Other'
+
+
+# One color per category, used by the calendar (event chips + filter pills)
+# and anywhere else a category badge appears. Keep these in sync with the
+# site palette in static/css/main.css.
+CATEGORY_COLORS = {
+    EventCategory.VISUAL_ARTS: '#E8523A',   # coral (site primary)
+    EventCategory.MUSIC: '#2A9D8F',         # teal
+    EventCategory.THEATER: '#7B5EA7',       # purple
+    EventCategory.DANCE: '#D36BA6',         # magenta
+    EventCategory.MUSEUMS: '#C98A1B',       # ochre
+    EventCategory.FILM: '#3A6EA5',          # blue
+    EventCategory.LITERARY: '#5B8C3A',      # green
+    EventCategory.CLASSES: '#E07B39',       # orange
+    EventCategory.FESTIVALS: '#B5443F',     # brick
+    EventCategory.OTHER: '#6C757D',         # gray
+}
+DEFAULT_CATEGORY_COLOR = CATEGORY_COLORS[EventCategory.OTHER]
 
 
 class Event(models.Model):
@@ -86,6 +109,9 @@ class Event(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse('event-detail', kwargs={'slug': self.slug})
+
     def save(self, *args, **kwargs):
         if not self.slug:
             base = slugify(self.title)
@@ -102,6 +128,10 @@ class Event(models.Model):
         if self.venue:
             return self.venue.name
         return self.location_name
+
+    @property
+    def category_color(self):
+        return CATEGORY_COLORS.get(self.category, DEFAULT_CATEGORY_COLOR)
 
 
 class SliderImage(models.Model):

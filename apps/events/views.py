@@ -1,14 +1,29 @@
+import datetime
+from urllib.parse import urlencode
+
 from django.contrib.auth.decorators import login_required
 from django.core.mail import mail_admins
 from django.db.models import Q
-from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.text import Truncator
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.generic import DetailView, TemplateView
 
 from .forms import EventSubmissionForm
-from .models import Event, EventStatus, SliderImage, SliderSettings
+from .models import (
+    CATEGORY_COLORS, Event, EventCategory, EventStatus, SliderImage, SliderSettings,
+)
+
+
+def category_choices():
+    """[{value, label, color}, ...] for filter pills and legends."""
+    return [
+        {'value': value, 'label': label, 'color': CATEGORY_COLORS[value]}
+        for value, label in EventCategory.choices
+    ]
 
 
 class LandingView(TemplateView):
@@ -57,10 +72,74 @@ class LandingView(TemplateView):
 class CalendarView(TemplateView):
     template_name = 'events/calendar.html'
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['categories'] = category_choices()
+        return ctx
+
 
 @method_decorator(xframe_options_exempt, name='dispatch')
 class CalendarEmbedView(TemplateView):
     template_name = 'events/calendar_embed.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['categories'] = category_choices()
+        return ctx
+
+
+def _event_date_span(event):
+    """(start, end) with an exclusive end, in the shapes iCalendar and Google
+    Calendar expect: dates for all-day events, naive local datetimes for
+    single-day timed events."""
+    if event.start_time and not event.end_date:
+        start = datetime.datetime.combine(event.start_date, event.start_time)
+        if event.end_time:
+            end = datetime.datetime.combine(event.start_date, event.end_time)
+            if end <= start:
+                end += datetime.timedelta(days=1)
+        else:
+            end = start + datetime.timedelta(hours=2)
+        return start, end, False
+    end_date = (event.end_date or event.start_date) + datetime.timedelta(days=1)
+    return event.start_date, end_date, True
+
+
+def _event_plain_description(event):
+    parts = []
+    if event.opening_reception_date:
+        when = event.opening_reception_date.strftime('%b %-d')
+        if event.opening_reception_time:
+            when += ' at ' + event.opening_reception_time.strftime('%-I:%M %p')
+        parts.append(f'Opening reception: {when}')
+    if event.description:
+        parts.append(event.description)
+    if event.url:
+        parts.append(event.url)
+    return '\n\n'.join(parts)
+
+
+def _event_location_line(event):
+    if event.venue:
+        v = event.venue
+        bits = [v.name, v.address, f'{v.city}, {v.state} {v.zip_code}'.strip()]
+        return ', '.join(b for b in bits if b)
+    return event.location_name
+
+
+def google_calendar_url(event):
+    start, end, all_day = _event_date_span(event)
+    fmt = '%Y%m%d' if all_day else '%Y%m%dT%H%M%S'
+    params = {
+        'action': 'TEMPLATE',
+        'text': event.title,
+        'dates': f'{start.strftime(fmt)}/{end.strftime(fmt)}',
+        'details': _event_plain_description(event),
+        'location': _event_location_line(event),
+    }
+    if not all_day:
+        params['ctz'] = 'America/New_York'
+    return 'https://calendar.google.com/calendar/render?' + urlencode(params)
 
 
 class EventDetailView(DetailView):
@@ -68,6 +147,87 @@ class EventDetailView(DetailView):
     template_name = 'events/event_detail.html'
     context_object_name = 'event'
     queryset = Event.objects.filter(status=EventStatus.APPROVED).select_related('venue')
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        event = self.object
+        # Link-preview metadata (Open Graph / Twitter cards), see base.html
+        ctx['page_title'] = f'{event.title} — Art Around Town Dayton'
+        summary = Truncator(event.description).chars(200) if event.description else ''
+        when = event.start_date.strftime('%B %-d, %Y')
+        if event.end_date:
+            when += ' – ' + event.end_date.strftime('%B %-d, %Y')
+        ctx['meta_description'] = f'{when} · {event.display_location}. {summary}'.strip()
+        if event.image:
+            ctx['og_image'] = self.request.build_absolute_uri(event.image.url)
+        ctx['og_type'] = 'article'
+        ctx['google_calendar_url'] = google_calendar_url(event)
+        return ctx
+
+
+def _ics_escape(value):
+    return (
+        str(value or '')
+        .replace('\\', '\\\\')
+        .replace(';', '\\;')
+        .replace(',', '\\,')
+        .replace('\r\n', '\\n')
+        .replace('\n', '\\n')
+    )
+
+
+def _ics_fold(line):
+    """RFC 5545 folds lines longer than 75 octets with CRLF + space."""
+    out, raw = [], line.encode('utf-8')
+    while len(raw) > 75:
+        cut = 75
+        while cut > 0 and (raw[cut] & 0xC0) == 0x80:   # don't split a UTF-8 char
+            cut -= 1
+        out.append(raw[:cut].decode('utf-8'))
+        raw = b' ' + raw[cut:]
+    out.append(raw.decode('utf-8'))
+    return '\r\n'.join(out)
+
+
+def event_ics(request, slug):
+    """Download a single event as an .ics file ("Add to my calendar")."""
+    event = get_object_or_404(
+        Event.objects.select_related('venue'), slug=slug, status=EventStatus.APPROVED,
+    )
+    start, end, all_day = _event_date_span(event)
+    if all_day:
+        dt_lines = [
+            f'DTSTART;VALUE=DATE:{start.strftime("%Y%m%d")}',
+            f'DTEND;VALUE=DATE:{end.strftime("%Y%m%d")}',
+        ]
+    else:
+        dt_lines = [
+            f'DTSTART;TZID=America/New_York:{start.strftime("%Y%m%dT%H%M%S")}',
+            f'DTEND;TZID=America/New_York:{end.strftime("%Y%m%dT%H%M%S")}',
+        ]
+    detail_url = request.build_absolute_uri(event.get_absolute_url())
+    stamp = timezone.now().strftime('%Y%m%dT%H%M%SZ')
+    lines = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Art Around Town Dayton//Events//EN',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH',
+        'BEGIN:VEVENT',
+        f'UID:event-{event.pk}@artaroundtowndayton.org',
+        f'DTSTAMP:{stamp}',
+        *dt_lines,
+        f'SUMMARY:{_ics_escape(event.title)}',
+        f'DESCRIPTION:{_ics_escape(_event_plain_description(event))}',
+        f'LOCATION:{_ics_escape(_event_location_line(event))}',
+        f'URL:{detail_url}',
+        'END:VEVENT',
+        'END:VCALENDAR',
+    ]
+    body = '\r\n'.join(_ics_fold(line) for line in lines) + '\r\n'
+    response = HttpResponse(body, content_type='text/calendar; charset=utf-8')
+    response['Content-Disposition'] = f'attachment; filename="{event.slug}.ics"'
+    return response
 
 
 def submit_event(request):

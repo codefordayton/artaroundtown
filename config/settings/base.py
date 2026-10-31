@@ -53,6 +53,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.events.context_processors.site_meta',
             ],
         },
     },
@@ -106,3 +107,28 @@ LOGOUT_REDIRECT_URL = '/'
 ADMIN_EMAIL = config('ADMIN_EMAIL', default='')
 ADMINS = [('Art Around Town Admin', ADMIN_EMAIL)] if ADMIN_EMAIL else []
 SERVER_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@artaroundtowndayton.org')
+
+# ── Site identity ──────────────────────────────────────────────────
+SITE_NAME = 'Art Around Town Dayton'
+SITE_TAGLINE = "Dayton's Arts & Culture Calendar"
+SITE_DESCRIPTION = (
+    "Dayton's arts and culture calendar: gallery openings, concerts, theater, "
+    "dance, museums and more across the Miami Valley. Browse what's on, or "
+    "submit your own event."
+)
+
+# Organizations credited in the masthead and footer, in display order.
+# `logo` is a path under static/ (e.g. 'img/partners/dsa.png'); leave it
+# None to show the name as text until the logo file is added.
+SITE_PARTNERS = [
+    {'name': 'Dayton Society of Artists', 'url': 'https://www.daytonsocietyofartists.org', 'logo': None},
+    {'name': 'The Collaboratory', 'url': 'https://www.daytoncollaboratory.org', 'logo': None},
+    {'name': 'Code for Dayton', 'url': 'https://www.codefordayton.org', 'logo': None},
+]
+
+# Social accounts for the footer. Fill in the URLs as the accounts go live;
+# entries with an empty url are hidden.
+SITE_SOCIAL = [
+    {'name': 'Facebook', 'url': ''},
+    {'name': 'Instagram', 'url': ''},
+]

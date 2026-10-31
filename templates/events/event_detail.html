@@ -5,8 +5,9 @@
 {% block content %}
 <div class="row g-4">
     <div class="col-md-{% if event.image %}8{% else %}12{% endif %}">
-        {% if event.get_category_display %}
-            <span class="badge rounded-pill mb-2" style="background-color:var(--color-secondary)">{{ event.get_category_display }}</span>
+        {% if event.category %}
+            <a href="{% url 'calendar' %}?category={{ event.category }}" class="badge rounded-pill mb-2 text-decoration-none"
+               style="background-color:{{ event.category_color }}">{{ event.get_category_display }}</a>
         {% endif %}
         <h1>{{ event.title }}</h1>
 
@@ -62,9 +63,20 @@
             </dd>
         </dl>
 
-        {% if event.url %}
-            <a href="{{ event.url }}" class="btn btn-primary mb-4" target="_blank" rel="noopener">More Info &rarr;</a>
-        {% endif %}
+        <div class="d-flex flex-wrap gap-2 mb-4">
+            {% if event.url %}
+                <a href="{{ event.url }}" class="btn btn-primary" target="_blank" rel="noopener">More Info &rarr;</a>
+            {% endif %}
+            <div class="dropdown">
+                <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    + Add to my calendar
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{{ google_calendar_url }}" target="_blank" rel="noopener">Google Calendar</a></li>
+                    <li><a class="dropdown-item" href="{% url 'event-ics' event.slug %}">Apple / Outlook (.ics)</a></li>
+                </ul>
+            </div>
+        </div>
 
         {% if event.description %}
             <div class="mt-2">{{ event.description|linebreaks }}</div>
