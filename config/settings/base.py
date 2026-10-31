@@ -123,9 +123,7 @@ SITE_DESCRIPTION = (
 SITE_PARTNERS = [
     {'name': 'Dayton Society of Artists', 'url': 'https://daytondsa.org/', 'logo': 'img/partners/dsa.png'},
     {'name': 'The Collaboratory', 'url': 'https://www.daytoncollaboratory.org', 'logo': 'img/partners/collaboratory.png'},
-    # TODO: logo once a PNG/SVG on white or transparent is available (the
-    # JPEG supplied was flattened onto black, which hides the wordmark)
-    {'name': 'Code for Dayton', 'url': 'https://www.codefordayton.org', 'logo': None},
+    {'name': 'Code for Dayton', 'url': 'https://www.codefordayton.org', 'logo': 'img/partners/cfd.png'},
 ]
 
 # Social accounts for the footer. Fill in the URLs as the accounts go live;
