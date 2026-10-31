@@ -142,7 +142,6 @@ BREVO_NEWSLETTER_LIST_ID = config('BREVO_NEWSLETTER_LIST_ID', default=0, cast=in
 
 # Brevo's hosted signup form (handles confirmation emails and unsubscribe
 # itself). When set, signup buttons link here instead of the inline form.
-NEWSLETTER_FORM_URL = config(
-    'NEWSLETTER_FORM_URL',
-    default='https://346e413d.sibforms.com/serve/MUIFABmkF3QZpxbLtWv8f3Tkr-HnYVpXa6VGOiUC9tYaI_0NauCRJkGZIZz3pAdjys0KpitbIx7UgukVV1Lq0wlP2d9Usmu7IbmD4NKJKZfHnqiXorxIm_iI88N7QZZExf2N7Z_1ZZZ130tT94Jx_q2MkFaJpMguPQ4ZG7eTs0qoTpK8d7-HgqlLose7ISE5D5d3S16u94dOBZWHqQ==',
-)
+# Empty for now: the signup stays hidden until Stefen shares the existing
+# newsletter's form link, which then goes in NEWSLETTER_FORM_URL.
+NEWSLETTER_FORM_URL = config('NEWSLETTER_FORM_URL', default='')
