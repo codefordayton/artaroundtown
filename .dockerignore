@@ -8,7 +8,9 @@ __pycache__
 db.sqlite3
 media/
 staticfiles/
-data/
+# Fetched snapshots stay out; the hand-maintained YAML plans ship with the image
+data/*
+!data/*.yaml
 .DS_Store
 .claude
 .vscode
