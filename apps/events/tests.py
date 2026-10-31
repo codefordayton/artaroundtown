@@ -167,6 +167,23 @@ class SearchTests(TestCase):
 
 
 class NewsletterTests(TestCase):
+    def setUp(self):
+        # These exercise the inline API form; the hosted-form link is tested separately.
+        self._override = self.settings(NEWSLETTER_FORM_URL='')
+        self._override.enable()
+        self.addCleanup(self._override.disable)
+
+    def test_hosted_form_link_when_url_set(self):
+        with self.settings(NEWSLETTER_FORM_URL='https://example.sibforms.com/serve/abc', BREVO_NEWSLETTER_LIST_ID=0):
+            resp = self.client.get(reverse('home'))
+        self.assertContains(resp, 'https://example.sibforms.com/serve/abc')
+        self.assertNotContains(resp, reverse('newsletter-signup'))
+
+    def test_social_links_in_footer(self):
+        resp = self.client.get(reverse('home'))
+        self.assertContains(resp, 'facebook.com/groups/artaroundtowndaytonoh')
+        self.assertContains(resp, 'instagram.com/essentialartistsdayton')
+
     def post(self, **data):
         return self.client.post(reverse('newsletter-signup'), {'next': '/calendar/', **data}, follow=True)
 

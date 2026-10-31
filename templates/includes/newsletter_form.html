@@ -1,4 +1,7 @@
-{% if NEWSLETTER_ENABLED %}
+{% if NEWSLETTER_FORM_URL %}
+<a href="{{ NEWSLETTER_FORM_URL }}" target="_blank" rel="noopener"
+   class="btn btn-primary newsletter-link {{ extra_class|default:'' }}">Sign up for the newsletter</a>
+{% elif NEWSLETTER_ENABLED %}
 <form method="post" action="{% url 'newsletter-signup' %}" class="newsletter-form {{ extra_class|default:'' }}">
   {% csrf_token %}
   <input type="hidden" name="next" value="{{ request.get_full_path }}">

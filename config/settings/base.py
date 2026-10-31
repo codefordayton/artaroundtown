@@ -121,16 +121,18 @@ SITE_DESCRIPTION = (
 # `logo` is a path under static/ (e.g. 'img/partners/dsa.png'); leave it
 # None to show the name as text until the logo file is added.
 SITE_PARTNERS = [
-    {'name': 'Dayton Society of Artists', 'url': 'https://www.daytonsocietyofartists.org', 'logo': None},
-    {'name': 'The Collaboratory', 'url': 'https://www.daytoncollaboratory.org', 'logo': None},
+    {'name': 'Dayton Society of Artists', 'url': 'https://daytondsa.org/', 'logo': 'img/partners/dsa.png'},
+    {'name': 'The Collaboratory', 'url': 'https://www.daytoncollaboratory.org', 'logo': 'img/partners/collaboratory.png'},
+    # TODO: logo once a PNG/SVG on white or transparent is available (the
+    # JPEG supplied was flattened onto black, which hides the wordmark)
     {'name': 'Code for Dayton', 'url': 'https://www.codefordayton.org', 'logo': None},
 ]
 
 # Social accounts for the footer. Fill in the URLs as the accounts go live;
 # entries with an empty url are hidden.
 SITE_SOCIAL = [
-    {'name': 'Facebook', 'url': ''},
-    {'name': 'Instagram', 'url': ''},
+    {'name': 'Facebook', 'url': 'https://www.facebook.com/groups/artaroundtowndaytonoh'},
+    {'name': 'Instagram', 'url': 'https://www.instagram.com/essentialartistsdayton/'},
 ]
 
 # ── Newsletter (Brevo contact list) ────────────────────────────────
@@ -139,3 +141,10 @@ SITE_SOCIAL = [
 # as outgoing email.
 BREVO_API_KEY = config('BREVO_API_KEY', default='')
 BREVO_NEWSLETTER_LIST_ID = config('BREVO_NEWSLETTER_LIST_ID', default=0, cast=int)
+
+# Brevo's hosted signup form (handles confirmation emails and unsubscribe
+# itself). When set, signup buttons link here instead of the inline form.
+NEWSLETTER_FORM_URL = config(
+    'NEWSLETTER_FORM_URL',
+    default='https://346e413d.sibforms.com/serve/MUIFABmkF3QZpxbLtWv8f3Tkr-HnYVpXa6VGOiUC9tYaI_0NauCRJkGZIZz3pAdjys0KpitbIx7UgukVV1Lq0wlP2d9Usmu7IbmD4NKJKZfHnqiXorxIm_iI88N7QZZExf2N7Z_1ZZZ130tT94Jx_q2MkFaJpMguPQ4ZG7eTs0qoTpK8d7-HgqlLose7ISE5D5d3S16u94dOBZWHqQ==',
+)

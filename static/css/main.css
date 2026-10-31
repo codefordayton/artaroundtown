@@ -406,11 +406,32 @@ main.container {
   border-bottom-color: var(--color-primary);
 }
 
+/* Logo tiles (hero): white cards so logos with white backgrounds blend in */
+.partner-list-logos { gap: 0.75rem; justify-content: center; }
+.partner-list-logos li + li::before { content: none; }
+.partner-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  padding: 0.6rem 1.1rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+  border-bottom: none !important;
+  font-weight: 800;
+  color: var(--color-dark);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.partner-tile:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.14); color: var(--color-dark); }
 .partner-logo {
-  height: 34px;
+  height: 42px;
   width: auto;
+  max-width: 200px;
+  object-fit: contain;
   display: block;
 }
+@media (max-width: 575px) { .partner-logo { height: 32px; max-width: 150px; } .partner-tile { min-height: 52px; padding: 0.5rem 0.8rem; } }
 
 .partner-credit-footer {
   justify-content: center;
@@ -419,7 +440,6 @@ main.container {
 }
 
 .partner-credit-footer .partner-list a:hover { color: var(--color-accent); border-bottom-color: var(--color-accent); }
-.partner-credit-footer .partner-logo { filter: brightness(0) invert(1); opacity: 0.9; }
 
 .footer-link, .footer-social a {
   color: rgba(255,255,255,0.75);

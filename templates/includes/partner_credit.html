@@ -1,12 +1,13 @@
 {% load static %}
-{# Partner credit line. Logos show when SITE_PARTNERS[n].logo is set in settings; otherwise the name. #}
+{# Partner credit line. Pass show_logos=True to render logos (from SITE_PARTNERS[n].logo) on white tiles; otherwise names. #}
 <div class="partner-credit {{ extra_class|default:'' }}">
   <span class="partner-credit-label">Brought to you by</span>
-  <ul class="partner-list">
+  <ul class="partner-list{% if show_logos %} partner-list-logos{% endif %}">
     {% for p in SITE_PARTNERS %}
       <li>
-        <a href="{{ p.url }}" target="_blank" rel="noopener" title="{{ p.name }}">
-          {% if p.logo %}
+        <a href="{{ p.url }}" target="_blank" rel="noopener" title="{{ p.name }}"
+           {% if show_logos %}class="partner-tile"{% endif %}>
+          {% if show_logos and p.logo %}
             <img src="{% static p.logo %}" alt="{{ p.name }}" class="partner-logo">
           {% else %}
             {{ p.name }}
