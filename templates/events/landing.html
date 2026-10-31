@@ -114,6 +114,7 @@
     margin-top: -2rem;   /* cancel <main class="py-4">'s top padding */
     margin-bottom: 0;
   }
+  .art-slider-wrap.has-messages { margin-top: 0; }  /* flash alerts sit above it */
   .art-slider-wrap .carousel-item img {
     width: 100%;
     height: 60vh;
@@ -197,7 +198,7 @@
 
 {# ── Art slider ───────────────────────────────────────────────── #}
 {% if slider_images %}
-<div id="artSlider" class="carousel slide carousel-fade art-slider-wrap bleed"
+<div id="artSlider" class="carousel slide carousel-fade art-slider-wrap bleed{% if messages %} has-messages{% endif %}"
      data-bs-ride="carousel" data-bs-interval="{{ slider_interval_ms }}">
   {% if slider_images|length > 1 %}
   <div class="carousel-indicators">
@@ -343,6 +344,13 @@
     <a href="{% url 'submit-event' %}" class="explore-card explore-submit">
       Share Your Event <span>Reach the whole Dayton arts community →</span>
     </a>
+    {% if NEWSLETTER_ENABLED %}
+    <div class="newsletter-card">
+      <div class="section-kicker">Newsletter</div>
+      <p class="fw-bold mb-2">Monthly highlights, straight to your inbox.</p>
+      {% include 'includes/newsletter_form.html' with extra_class='home' %}
+    </div>
+    {% endif %}
   </div>
 </div>
 

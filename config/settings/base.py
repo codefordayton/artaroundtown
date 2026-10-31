@@ -132,3 +132,10 @@ SITE_SOCIAL = [
     {'name': 'Facebook', 'url': ''},
     {'name': 'Instagram', 'url': ''},
 ]
+
+# ── Newsletter (Brevo contact list) ────────────────────────────────
+# The signup form appears once BREVO_NEWSLETTER_LIST_ID is set (Brevo →
+# Contacts → Lists → the number in the list's URL). Uses the same API key
+# as outgoing email.
+BREVO_API_KEY = config('BREVO_API_KEY', default='')
+BREVO_NEWSLETTER_LIST_ID = config('BREVO_NEWSLETTER_LIST_ID', default=0, cast=int)

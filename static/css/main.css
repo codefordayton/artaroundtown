@@ -428,3 +428,43 @@ main.container {
 }
 
 .footer-link:hover, .footer-social a:hover { color: var(--color-accent); }
+
+/* ── Nav search ────────────────────────────────────────────────── */
+.nav-search { margin-right: 0.5rem; }
+.nav-search .form-control {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  width: 160px;
+  transition: width var(--transition), background-color var(--transition);
+}
+.nav-search .form-control::placeholder { color: rgba(255,255,255,0.6); }
+.nav-search .form-control:focus {
+  width: 220px;
+  background: rgba(255,255,255,0.2);
+  border-color: var(--color-accent);
+  box-shadow: none;
+  color: #fff;
+}
+@media (max-width: 991px) { .nav-search .form-control, .nav-search .form-control:focus { width: 100%; } }
+
+/* ── Newsletter signup ─────────────────────────────────────────── */
+.newsletter-row { display: flex; gap: 0.5rem; }
+.newsletter-row .form-control { border-radius: var(--radius-pill); }
+.newsletter-row .btn { white-space: nowrap; }
+.nl-honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.footer-newsletter { max-width: 460px; }
+.footer-newsletter .form-control {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.25);
+  color: #fff;
+}
+.footer-newsletter .form-control::placeholder { color: rgba(255,255,255,0.55); }
+.newsletter-card {
+  border: 2px dashed rgba(0,0,0,0.1);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  margin-top: 1.5rem;
+}
+.newsletter-card p { color: var(--color-dark); }

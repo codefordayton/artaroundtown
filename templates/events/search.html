@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="mb-3">Search</h1>
+
+<form method="get" action="{% url 'search' %}" class="search-form mb-4" role="search">
+  <label class="visually-hidden" for="search-q">Search events and venues</label>
+  <div class="input-group input-group-lg">
+    <input type="search" name="q" id="search-q" class="form-control" value="{{ q }}"
+           placeholder="Search events, artists, galleries…" autofocus>
+    <button type="submit" class="btn btn-primary px-4">Search</button>
+  </div>
+</form>
+
+{% if searched %}
+  {% if not current_events and not past_events and not venues %}
+    <p class="text-muted lead">Nothing matched <strong>“{{ q }}”</strong>. Try a shorter word, an artist's last name, or a gallery.</p>
+  {% endif %}
+
+  {% if current_events %}
+    <h2 class="h4 mt-4">Current &amp; upcoming events</h2>
+    <ul class="list-group mt-2 mb-4">
+    {% for event in current_events %}
+      <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+        <div>
+          <a href="{% url 'event-detail' event.slug %}">{{ event.title }}</a>
+          <div class="small text-muted">
+            {% if event.category %}<span class="cat-dot" style="--cat-color: {{ event.category_color }}"></span>{{ event.get_category_display }} · {% endif %}{{ event.display_location }}
+          </div>
+        </div>
+        <span class="text-muted small text-nowrap">
+          {{ event.start_date|date:"M j" }}{% if event.end_date %} &ndash; {{ event.end_date|date:"M j" }}{% endif %}
+        </span>
+      </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if venues %}
+    <h2 class="h4 mt-4">Galleries &amp; organizations</h2>
+    <ul class="list-group mt-2 mb-4">
+    {% for venue in venues %}
+      <li class="list-group-item">
+        <a href="{% url 'venue-detail' venue.slug %}">{{ venue.name }}</a>
+        <span class="small text-muted ms-2">{{ venue.city }}{% if venue.address %} · {{ venue.address }}{% endif %}</span>
+      </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if past_events %}
+    <h2 class="h4 mt-4 text-muted">Past events</h2>
+    <ul class="list-group mt-2 mb-4">
+    {% for event in past_events %}
+      <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+        <div>
+          <a href="{% url 'event-detail' event.slug %}" class="text-muted">{{ event.title }}</a>
+          <div class="small text-muted">{{ event.display_location }}</div>
+        </div>
+        <span class="text-muted small text-nowrap">{{ event.start_date|date:"M j, Y" }}</span>
+      </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endif %}
+{% endblock %}

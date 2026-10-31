@@ -1,6 +1,8 @@
 import datetime
 from urllib.parse import urlencode
 
+from django import forms
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import mail_admins
 from django.db.models import Q
@@ -8,10 +10,13 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.text import Truncator
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.generic import DetailView, TemplateView
 
+from apps.venues.models import Venue
+from . import newsletter
 from .forms import EventSubmissionForm
 from .models import (
     CATEGORY_COLORS, Event, EventCategory, EventStatus, SliderImage, SliderSettings,
@@ -277,3 +282,75 @@ def submit_event(request):
 
 def submit_success(request):
     return render(request, 'events/submit_success.html')
+
+
+# ── Search ──────────────────────────────────────────────────────────
+
+def _terms(q):
+    return [t for t in q.split() if len(t) > 1][:8]
+
+
+class SearchView(TemplateView):
+    template_name = 'events/search.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        q = self.request.GET.get('q', '').strip()[:100]
+        ctx['q'] = q
+        ctx['page_title'] = f'Search: {q} — Art Around Town Dayton' if q else 'Search — Art Around Town Dayton'
+        terms = _terms(q)
+        if not terms:
+            ctx.update(current_events=[], past_events=[], venues=[], searched=bool(q))
+            return ctx
+
+        events = Event.objects.filter(status=EventStatus.APPROVED).select_related('venue')
+        venues = Venue.objects.filter(is_active=True)
+        for t in terms:   # every term must match somewhere
+            events = events.filter(
+                Q(title__icontains=t) | Q(description__icontains=t)
+                | Q(venue__name__icontains=t) | Q(location_name__icontains=t)
+            )
+            venues = venues.filter(
+                Q(name__icontains=t) | Q(city__icontains=t) | Q(description__icontains=t)
+            )
+
+        today = timezone.localdate()
+        live = Q(start_date__gte=today) | Q(end_date__gte=today)
+        ctx['current_events'] = events.filter(live).order_by('start_date')[:50]
+        ctx['past_events'] = events.exclude(live).order_by('-start_date')[:20]
+        ctx['venues'] = venues[:30]
+        ctx['searched'] = True
+        return ctx
+
+
+# ── Newsletter signup ──────────────────────────────────────────────
+
+class NewsletterForm(forms.Form):
+    email = forms.EmailField(max_length=254)
+    name = forms.CharField(max_length=120, required=False)
+    website = forms.CharField(required=False)   # honeypot: humans leave it blank
+
+
+def newsletter_signup(request):
+    if request.method != 'POST':
+        return redirect('home')
+
+    back = request.POST.get('next') or request.META.get('HTTP_REFERER') or '/'
+    if not url_has_allowed_host_and_scheme(back, allowed_hosts={request.get_host()}):
+        back = '/'
+
+    form = NewsletterForm(request.POST)
+    if not form.is_valid():
+        messages.error(request, 'Please enter a valid email address.')
+        return redirect(back)
+    if form.cleaned_data['website']:        # bot filled the hidden field
+        messages.success(request, "You're on the list. Thanks!")
+        return redirect(back)
+
+    try:
+        newsletter.subscribe(form.cleaned_data['email'], form.cleaned_data['name'])
+    except newsletter.NewsletterError as exc:
+        messages.error(request, str(exc))
+    else:
+        messages.success(request, "You're on the list. Thanks!")
+    return redirect(back)

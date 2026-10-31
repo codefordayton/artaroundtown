@@ -48,7 +48,12 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-lg-center">
+                <form class="nav-search d-flex ms-lg-auto my-2 my-lg-0" method="get" action="{% url 'search' %}" role="search">
+                    <label class="visually-hidden" for="nav-q">Search</label>
+                    <input type="search" name="q" id="nav-q" class="form-control form-control-sm" placeholder="Search…"
+                           value="{% if request.resolver_match.url_name == 'search' %}{{ request.GET.q }}{% endif %}">
+                </form>
+                <ul class="navbar-nav align-items-lg-center">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'calendar' %}">Calendar</a>
                     </li>
@@ -101,6 +106,12 @@
 
     <footer class="bg-dark text-light py-4 mt-5">
         <div class="container text-center">
+            {% if NEWSLETTER_ENABLED %}
+            <div class="footer-newsletter mx-auto mb-4">
+                <p class="fw-bold mb-2">Get the month's art &amp; culture highlights in your inbox</p>
+                {% include 'includes/newsletter_form.html' with extra_class='footer' %}
+            </div>
+            {% endif %}
             {% include 'includes/partner_credit.html' with extra_class='partner-credit-footer' %}
             {% if SITE_SOCIAL %}
             <p class="footer-social mb-2 small">

@@ -63,5 +63,5 @@ CSRF_COOKIE_SECURE = True
 EMAIL_BACKEND = 'anymail.backends.brevo.EmailBackend'
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@artaroundtowndayton.org')
 ANYMAIL = {
-    'BREVO_API_KEY': config('BREVO_API_KEY', default=''),
+    'BREVO_API_KEY': BREVO_API_KEY,
 }

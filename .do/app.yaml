@@ -52,6 +52,8 @@ services:
       - key: BREVO_API_KEY
         type: SECRET
         value: "set me"
+      - key: BREVO_NEWSLETTER_LIST_ID   # Brevo list id; leave empty to hide the signup form
+        value: ""
       - key: DEFAULT_FROM_EMAIL
         value: noreply@artaroundtowndayton.org
       - key: ADMIN_EMAIL

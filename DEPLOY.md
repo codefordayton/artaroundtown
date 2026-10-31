@@ -125,6 +125,13 @@ Events on an absorbed duplicate move to the kept venue, whose slug (and
 URL) stays the same. Edit the YAML to change the final names/addresses
 before applying; the command is safe to re-run.
 
+### 9. Newsletter signup
+
+Create a list in Brevo (Contacts → Lists), copy the numeric id from its URL
+and set `BREVO_NEWSLETTER_LIST_ID` on the web service. The signup form in
+the footer and on the home page appears on the next deploy; it adds
+contacts to that list using the existing `BREVO_API_KEY`.
+
 ## Day-to-day
 
 - Push to `main` → App Platform builds the Dockerfile, runs the `migrate`

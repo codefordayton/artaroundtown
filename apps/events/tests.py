@@ -136,3 +136,80 @@ class EventPageTests(TestCase):
         resp = self.client.get('/favicon.ico')
         self.assertEqual(resp.status_code, 301)
         self.assertIn('favicon.ico', resp['Location'])
+
+
+class SearchTests(TestCase):
+    def setUp(self):
+        self.venue = Venue.objects.create(name='Rosewood Gallery', city='Kettering')
+        make_event(title='Holly Roberts: Confluence', start_date=datetime.date(2099, 1, 1),
+                   end_date=datetime.date(2099, 2, 1), venue=self.venue, location_name='')
+        make_event(title='Old Quilt Show', start_date=datetime.date(2001, 1, 1))
+        make_event(title='Secret Pending Roberts', status=EventStatus.PENDING)
+
+    def test_matches_title_and_venue_and_splits_sections(self):
+        resp = self.client.get(reverse('search'), {'q': 'roberts'})
+        self.assertContains(resp, 'Holly Roberts: Confluence')
+        self.assertNotContains(resp, 'Secret Pending')
+        resp = self.client.get(reverse('search'), {'q': 'rosewood'})
+        self.assertContains(resp, 'Holly Roberts: Confluence')   # via venue name
+        self.assertContains(resp, 'Rosewood Gallery')
+        resp = self.client.get(reverse('search'), {'q': 'quilt'})
+        self.assertContains(resp, 'Past events')
+        self.assertContains(resp, 'Old Quilt Show')
+
+    def test_all_terms_must_match(self):
+        resp = self.client.get(reverse('search'), {'q': 'holly quilt'})
+        self.assertContains(resp, 'Nothing matched')
+
+    def test_empty_query_is_fine(self):
+        self.assertEqual(self.client.get(reverse('search')).status_code, 200)
+        self.assertContains(self.client.get(reverse('search'), {'q': 'a'}), 'Search')
+
+
+class NewsletterTests(TestCase):
+    def post(self, **data):
+        return self.client.post(reverse('newsletter-signup'), {'next': '/calendar/', **data}, follow=True)
+
+    def test_hidden_when_not_configured(self):
+        with self.settings(BREVO_NEWSLETTER_LIST_ID=0):
+            self.assertNotContains(self.client.get(reverse('home')), 'newsletter-signup')
+
+    def test_form_shown_when_configured(self):
+        with self.settings(BREVO_NEWSLETTER_LIST_ID=7):
+            self.assertContains(self.client.get(reverse('home')), reverse('newsletter-signup'))
+
+    def test_subscribes_via_brevo(self):
+        from unittest import mock
+        with self.settings(BREVO_NEWSLETTER_LIST_ID=7, BREVO_API_KEY='k'), \
+                mock.patch('apps.events.newsletter.requests.post') as post:
+            post.return_value.status_code = 201
+            resp = self.post(email='fan@example.com', name='Pat Artist')
+        self.assertEqual(resp.redirect_chain[-1][0], '/calendar/')
+        self.assertContains(resp, 'on the list. Thanks!')
+        payload = post.call_args.kwargs['json']
+        self.assertEqual(payload['listIds'], [7])
+        self.assertEqual(payload['attributes'], {'FIRSTNAME': 'Pat', 'LASTNAME': 'Artist'})
+        self.assertEqual(post.call_args.kwargs['headers']['api-key'], 'k')
+
+    def test_brevo_failure_shows_error(self):
+        from unittest import mock
+        with self.settings(BREVO_NEWSLETTER_LIST_ID=7, BREVO_API_KEY='k'), \
+                mock.patch('apps.events.newsletter.requests.post') as post:
+            post.return_value.status_code = 400
+            post.return_value.text = 'bad'
+            resp = self.post(email='fan@example.com')
+        self.assertContains(resp, 'Could not complete the signup')
+
+    def test_honeypot_and_bad_email(self):
+        from unittest import mock
+        with self.settings(BREVO_NEWSLETTER_LIST_ID=7, BREVO_API_KEY='k'), \
+                mock.patch('apps.events.newsletter.requests.post') as post:
+            self.post(email='bot@example.com', website='http://spam')
+            self.post(email='not-an-email')
+            post.assert_not_called()
+
+    def test_open_redirect_blocked(self):
+        with self.settings(BREVO_NEWSLETTER_LIST_ID=7, DEBUG=True):
+            resp = self.client.post(reverse('newsletter-signup'),
+                                    {'next': 'https://evil.example/', 'email': 'a@b.co'})
+        self.assertEqual(resp['Location'], '/')

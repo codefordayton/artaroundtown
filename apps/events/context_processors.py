@@ -12,6 +12,7 @@ def site_meta(request):
         'SITE_DESCRIPTION': settings.SITE_DESCRIPTION,
         'SITE_PARTNERS': settings.SITE_PARTNERS,
         'SITE_SOCIAL': [s for s in settings.SITE_SOCIAL if s.get('url')],
+        'NEWSLETTER_ENABLED': bool(settings.BREVO_NEWSLETTER_LIST_ID),
         # Social scrapers need an absolute image URL
         'default_og_image': request.build_absolute_uri(static('img/og-default.png')),
     }
